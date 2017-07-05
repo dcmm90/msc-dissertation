@@ -9,6 +9,7 @@ def SVM_classify(train, y_train, test):
     #rbf
     print 'SVM-rbf'
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['rbf']}]
+
     svr = svm.SVC()
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1)
     clf.fit(train, y_train)
