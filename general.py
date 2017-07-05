@@ -18,7 +18,6 @@ def main():
     feat_sel = 't_test'
     beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
     save_file = os.path.realpath('../data_str/')
-    print save_file
     betaqn = pd.read_csv(beta_file ,skiprows=(1,2), index_col=0, compression='zip',sep=',')
     betaqn = betaqn.T
 
@@ -42,7 +41,7 @@ def main():
     samples = ec.shape[0]
     features_num = [200000,50000,1000,500,100,20,10,5]
     for num in features_num:
-        print num
+        print(num)
         features_sel = dict.fromkeys(list(ec),0)
         y_true = np.zeros(samples)
         y_pred_rbf = np.zeros(samples)
@@ -54,7 +53,7 @@ def main():
         c_val_pol = np.zeros(samples)
         gamma_val_pol = np.zeros(samples)
         for i in range(samples):
-            print i
+            print(i)
             train_full = ec.loc[ec.index != ec.index[i]]
             sample_barcode.append(ec.index[i])
             start_time = time.time()
@@ -65,7 +64,7 @@ def main():
             for elem in features:
                 features_sel[elem] +=1
             print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-            print 'features selected'
+            print('features selected')
             test = ec.loc[ec.index == ec.index[i]]
             test = test.loc[:,features]
             y_train = info['braak_bin'].loc[train.index]

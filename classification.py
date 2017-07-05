@@ -9,7 +9,7 @@ def SVM_classify(train, y_train, test):
     gamma_range = np.logspace(-9, 3, 13)
 
     #rbf
-    print 'SVM-rbf'
+    print('SVM-rbf')
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['rbf']}]
 
     svr = svm.SVC()
@@ -18,7 +18,7 @@ def SVM_classify(train, y_train, test):
     y_rbf = clf.predict(test)[0]
     c_rbf = clf.best_params_['C']
     gamma_rbf = clf.best_params_['gamma']
-    print 'SVM-polynomial'
+    print('SVM-polynomial')
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly']}]
     svr = svm.SVC()
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
@@ -26,7 +26,7 @@ def SVM_classify(train, y_train, test):
     y_pol = clf.predict(test)[0]
     c_pol = clf.best_params_['C']
     gamma_pol = clf.best_params_['gamma']
-    print 'SVM-linear'
+    print('SVM-linear')
     param_grid = [{'C': C_range, 'kernel': ['linear']}]
     svr = svm.SVC()
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
