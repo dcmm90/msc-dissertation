@@ -6,13 +6,20 @@ from sklearn.metrics import classification_report
 import pickle
 import classification as cl
 import feature_selection as fs
+import os.path
+
+from os.path import join, dirname, abspath
+
 
 
 def main():
 
     tissue='EC'
     feat_sel = 't_test'
-    betaqn = pd.read_csv('GSE59685_betas2.csv.zip',skiprows=(1,2), index_col=0, compression='zip',sep=',')
+    beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
+    save_file = os.path.realpath('../data_str/')
+    print save_file
+    betaqn = pd.read_csv(beta_file ,skiprows=(1,2), index_col=0, compression='zip',sep=',')
     betaqn = betaqn.T
 
     info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
@@ -54,7 +61,7 @@ def main():
             sample_barcode.append(ec.index[i])
             start_time = time.time()
             if feat_sel == 't_test':
-                features, train = fs.feature_sel_t_test(train_full, info, num)
+                features, train = feature_sel_t_test_parallel(train_full, info, num)
             elif feat_sel == 'fisher':
                 features, train = fs.feature_fisher_score(train_full, info, num)
             for elem in features:
@@ -74,20 +81,20 @@ def main():
          'gamma_poly': gamma_val_pol,
          'C_lin': c_val_lin
         })
-        pickle.dump(parameters, open("data_str/params_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+        pickle.dump(parameters, open(save_file + "/params_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         predictions = pd.DataFrame(
         {'y_true': y_true,
          'y_rbf': y_pred_rbf,
          'y_poly': y_pred_pol,
          'y_lin': y_pred_lin,
         })
-        pickle.dump(predictions, open("data_str/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+        pickle.dump(predictions, open(save_file + "/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.iteritems()}
         svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                             np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                             np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
-    pickle.dump(features_sel_total, open("data_str/features_%s_%s.p" % (tissue, feat_sel), "wb"))
-    pickle.dump(svm_accuracy, open("data_str/accuracy_%s_%s.p" % (tissue, feat_sel), "wb"))
+    pickle.dump(features_sel_total, open(save_file + "/features_%s_%s.p" % (tissue, feat_sel), "wb"))
+    pickle.dump(svm_accuracy, open(save_file + "/accuracy_%s_%s.p" % (tissue, feat_sel), "wb"))
 
 
 
