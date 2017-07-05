@@ -1,5 +1,5 @@
 from __future__ import division
-from time import time
+import time
 import pandas as pd
 import numpy as np
 from sklearn.metrics import classification_report
@@ -14,7 +14,6 @@ def main():
     feat_sel = 't_test'
     betaqn = pd.read_csv('GSE59685_betas2.csv.zip',skiprows=(1,2), index_col=0, compression='zip',sep=',')
     betaqn = betaqn.T
-    print betaqn.head(5)
 
     info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
     info = info.drop('Unnamed: 0', 1)
@@ -28,7 +27,6 @@ def main():
     info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
     info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
     info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
-    print info.head(5)
 
     sample_barcode = []
     ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
@@ -54,14 +52,14 @@ def main():
             print i
             train_full = ec.loc[ec.index != ec.index[i]]
             sample_barcode.append(ec.index[i])
+            start_time = time.time()
             if feat_sel == 't_test':
                 features, train = fs.feature_sel_t_test(train_full, info, num)
             elif feat_sel == 'fisher':
                 features, train = fs.feature_fisher_score(train_full, info, num)
-            print features
-            print train.head(5)
             for elem in features:
                 features_sel[elem] +=1
+            print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             print 'features selected'
             test = ec.loc[ec.index == ec.index[i]]
             test = test.loc[:,features]

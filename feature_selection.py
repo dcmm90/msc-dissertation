@@ -1,16 +1,16 @@
 import numpy as np
 import pandas as pd
 
-
-
-
 def feature_sel_t_test(betas, info, size):
     c_info = info.loc[betas.index]
     c1 = c_info[c_info['braak_bin'] == 0].index
     c2 = c_info[c_info['braak_bin'] == 1].index
-
-    numerator = np.absolute(betas.loc[c1].apply(np.mean,0) - betas.loc[c2].apply(np.mean,0))
-    denominator = np.sqrt((betas.loc[c1].apply(np.std,0)/c1.shape[0])+(betas.loc[c2].apply(np.std,0)/c2.shape[0]))
+    m1 = betas.loc[c1].apply(np.mean,0)
+    m2 = betas.loc[c2].apply(np.mean,0)
+    numerator = np.absolute(m1 - m2)
+    std1 = betas.loc[c1].apply(np.std,0)
+    std2 = betas.loc[c2].apply(np.std,0)
+    denominator = np.sqrt((std1/c1.shape[0])+(std2/c2.shape[0]))
     t_stat = numerator/denominator
     ind = np.argsort(t_stat)[-size:]
     ec_feat = betas.iloc[:,ind]
