@@ -65,8 +65,8 @@ def main():
             print 'features selected'
             test = ec.loc[ec.index == ec.index[i]]
             test = test.loc[:,features]
-            y_train = info_index['braak_bin'].loc[train.index]
-            y_true[i] = info_index['braak_bin'].loc[test.index]
+            y_train = info['braak_bin'].loc[train.index]
+            y_true[i] = info['braak_bin'].loc[test.index]
             (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i], y_pred_pol[i],
             c_val_pol[i], gamma_val_pol[i], y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify(train, y_train, test)
         parameters = pd.DataFrame(
