@@ -7,6 +7,7 @@ import pickle
 import classification as cl
 import feature_selection as fs
 import os.path
+from zipfile import ZipFile
 
 from os.path import join, dirname, abspath
 
@@ -18,7 +19,9 @@ def main():
     feat_sel = 't_test'
     beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
     save_file = os.path.realpath('../data_str/')
-    betaqn = pd.read_csv(beta_file ,skiprows=(1,2), index_col=0, compression='zip',sep=',')
+    zipfile = ZipFile(beta_file)
+    zipfile.getinfo('GSE59685_betas2.csv').file_size += (2 ** 64) - 1
+    betaqn = pd.read_csv(zipfile.open('GSE59685_betas2.csv'),skiprows=(1,2), index_col=0,sep=',')
     betaqn = betaqn.T
 
     info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
@@ -58,7 +61,7 @@ def main():
             sample_barcode.append(ec.index[i])
             start_time = time.time()
             if feat_sel == 't_test':
-                features, train = feature_sel_t_test_parallel(train_full, info, num)
+                features, train = fs.feature_sel_t_test_parallel(train_full, info, num)
             elif feat_sel == 'fisher':
                 features, train = fs.feature_fisher_score(train_full, info, num)
             for elem in features:
