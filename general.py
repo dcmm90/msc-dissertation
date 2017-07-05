@@ -41,8 +41,6 @@ def main():
     svm_accuracy = {}
     samples = ec.shape[0]
     features_num = [200000,50000,1000,500,100,20,10,5]
-    samples = 5
-    features_num = [20]
     for num in features_num:
         print num
         features_sel = dict.fromkeys(list(ec),0)
@@ -80,14 +78,14 @@ def main():
          'C_poly': c_val_pol,
          'gamma_poly': gamma_val_pol,
          'C_lin': c_val_lin
-        })
+        }, index = sample_barcode)
         pickle.dump(parameters, open(save_file + "/params_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         predictions = pd.DataFrame(
         {'y_true': y_true,
          'y_rbf': y_pred_rbf,
          'y_poly': y_pred_pol,
          'y_lin': y_pred_lin,
-        })
+        }, index = sample_barcode)
         pickle.dump(predictions, open(save_file + "/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.iteritems()}
         svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
