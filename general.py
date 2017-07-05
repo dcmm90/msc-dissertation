@@ -58,7 +58,7 @@ def main():
                 features, train = fs.feature_sel_t_test(train_full, info, num)
             elif feat_sel == 'fisher':
                 features, train = fs.feature_fisher_score(train_full, info, num)
-            print features.head(5)
+            print features
             print train.head(5)
             for elem in features:
                 features_sel[elem] +=1
