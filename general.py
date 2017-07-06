@@ -8,13 +8,16 @@ import classification as cl
 import feature_selection as fs
 import os.path
 from zipfile import ZipFile
-
+import sys, os
 from os.path import join, dirname, abspath
 
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
 
 
 def main():
-
+    blockPrint()
     tissue='EC'
     feat_sel = 't_test'
     beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
@@ -44,7 +47,6 @@ def main():
     features_sel_total = dict.fromkeys(list(ec),[0])
     svm_accuracy = {}
     samples = ec.shape[0]
-    samples = 5
     features_num = [100000,50000,1000,500,100,20,10,5]
     for num in features_num:
         print(num)
@@ -83,14 +85,14 @@ def main():
          'C_poly': c_val_pol,
          'gamma_poly': gamma_val_pol,
          'C_lin': c_val_lin
-        }, index = sample_barcode)
+        })
         pickle.dump(parameters, open(save_file + "/params_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         predictions = pd.DataFrame(
         {'y_true': y_true,
          'y_rbf': y_pred_rbf,
          'y_poly': y_pred_pol,
          'y_lin': y_pred_lin,
-        }, index = sample_barcode)
+        })
         pickle.dump(predictions, open(save_file + "/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
         features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
         svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
