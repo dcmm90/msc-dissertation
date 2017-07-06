@@ -58,7 +58,7 @@ def main():
         c_val_pol = np.zeros(samples)
         gamma_val_pol = np.zeros(samples)
         for i in range(samples):
-            print(i + ' ' + num)
+            print('iteracion %d para %d features' %(i,num))
             train_full = ec.loc[ec.index != ec.index[i]]
             sample_barcode.append(ec.index[i])
             start_time = time.time()
