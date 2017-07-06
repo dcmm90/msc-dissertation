@@ -5,8 +5,10 @@ import numpy as np
 
 
 def SVM_classify(train, y_train, test):
-    C_range = np.logspace(-2, 10, 13)
-    gamma_range = np.logspace(-9, 3, 13)
+    #C_range = np.logspace(-2, 10, 13)
+    #gamma_range = np.logspace(-9, 3, 13)
+    C_range = np.logspace(-2, 10, 6)
+    gamma_range = np.logspace(-6, 3, 8)
 
     #rbf
     print('SVM-rbf')

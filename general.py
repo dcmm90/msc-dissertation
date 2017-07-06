@@ -37,12 +37,14 @@ def main():
     info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
     info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
 
+    pickle.dump(info, open(save_file + "/info_test.p", "wb"))
+
     sample_barcode = []
     ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
     features_sel_total = dict.fromkeys(list(ec),[0])
     svm_accuracy = {}
     samples = ec.shape[0]
-    features_num = [200000,50000,1000,500,100,20,10,5]
+    features_num = [100000,50000,1000,500,100,20,10,5]
     for num in features_num:
         print(num)
         features_sel = dict.fromkeys(list(ec),0)
@@ -56,7 +58,7 @@ def main():
         c_val_pol = np.zeros(samples)
         gamma_val_pol = np.zeros(samples)
         for i in range(samples):
-            print(i)
+            print(i + ' ' + num)
             train_full = ec.loc[ec.index != ec.index[i]]
             sample_barcode.append(ec.index[i])
             start_time = time.time()
