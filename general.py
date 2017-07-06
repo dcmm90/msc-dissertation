@@ -44,6 +44,7 @@ def main():
     features_sel_total = dict.fromkeys(list(ec),[0])
     svm_accuracy = {}
     samples = ec.shape[0]
+    samples = 5
     features_num = [100000,50000,1000,500,100,20,10,5]
     for num in features_num:
         print(num)
@@ -91,7 +92,7 @@ def main():
          'y_lin': y_pred_lin,
         }, index = sample_barcode)
         pickle.dump(predictions, open(save_file + "/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
-        features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.iteritems()}
+        features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
         svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                             np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                             np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
