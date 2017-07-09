@@ -17,7 +17,7 @@ def blockPrint():
 
 
 def main():
-    tissues=['CER', 'STG']
+    tissues=['STG', 'WB', 'FC']
     for tissue in tissues:
         feat_sel = 't_test'
         beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
