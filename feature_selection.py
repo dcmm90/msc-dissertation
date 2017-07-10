@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from multiprocessing import cpu_count, Pool
 
-
-
 def feature_sel_t_test(betas, info, size):
     c_info = info.loc[betas.index]
     c1 = c_info[c_info['braak_bin'] == 0].index

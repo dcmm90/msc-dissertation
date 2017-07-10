@@ -17,7 +17,7 @@ def blockPrint():
 
 
 def main():
-    tissues=['STG', 'WB', 'FC']
+    tissues=['EC']
     for tissue in tissues:
         feat_sel = 't_test'
         beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
@@ -47,7 +47,8 @@ def main():
         features_sel_total = dict.fromkeys(list(ec),[0])
         svm_accuracy = {}
         samples = ec.shape[0]
-        features_num = [100000,50000,1000,500,100,20,10]
+        #features_num = [100000,50000,1000,500,100,20,10]
+        features_num = [200000]
         for num in features_num:
             print(num)
             features_sel = dict.fromkeys(list(ec),0)
