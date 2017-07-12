@@ -10,6 +10,7 @@ import os.path
 from zipfile import ZipFile
 import sys, os
 from os.path import join, dirname, abspath
+from pathlib import Path
 
 # Disable
 def blockPrint():
@@ -55,8 +56,8 @@ def main():
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
-        print(features_file)
-        if features_file.is_file():
+        my_file = Path(features_file)
+        if my_file.is_file():
             features_per_i = pickle.load( open( features_file, "rb" ) )
         else:
             features_per_i = {}
@@ -65,9 +66,9 @@ def main():
                 start_time = time.time()
                 train_full = ec.loc[ec.index != ec.index[i]]
                 if feat_sel == 't_test':
-                    features_per_i[i] = fs.feature_sel_t_test_parallel(train_full, info, num[0])
+                    features_per_i[i] = fs.feature_sel_t_test_parallel(train_full, info, features_num[0])
                 elif feat_sel == 'fisher':
-                    features_per_i[i] = fs.feature_fisher_score(train_full, info, num[0])
+                    features_per_i[i] = fs.feature_fisher_score(train_full, info, features_num[0])
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_per_i, open(features_file, "wb"))
 

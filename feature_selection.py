@@ -55,7 +55,7 @@ def feature_fisher_score(betas, info, size):
 
 def parallelize(data, func):
     cores = cpu_count() #Number of CPU cores on your system
-    print('num of cores: %d' %cores)
+    #print('num of cores: %d' %cores)
     partitions = cores #Define as many partitions as you want
     data_split = np.array_split(data, partitions, axis=1)
     pool = Pool(cores)
