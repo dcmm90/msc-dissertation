@@ -19,6 +19,9 @@ def blockPrint():
 def main():
     tissues=['EC']
     for tissue in tissues:
+        iters_big = 3
+        iters_small = 10
+        big_small = 200
         feat_sel = 't_test'
         beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
         save_file = os.path.realpath('../data_str/')
@@ -40,15 +43,16 @@ def main():
         info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
         info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
 
-        pickle.dump(info, open(save_file + "/info_test.p", "wb"))
+        #pickle.dump(info, open(save_file + "/info_test.p", "wb"))
 
         sample_barcode = []
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         features_sel_total = dict.fromkeys(list(ec),[0])
         svm_accuracy = {}
         samples = ec.shape[0]
-        #features_num = [100000,50000,1000,500,100,20,10]
-        features_num = [200000]
+        #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
+        features_num = [500, 250, 100, 75, 50, 20, 10]
+        #features_num = [200000]
         for num in features_num:
             print(num)
             features_sel = dict.fromkeys(list(ec),0)
@@ -78,8 +82,25 @@ def main():
                 test = test.loc[:,features]
                 y_train = info['braak_bin'].loc[train.index]
                 y_true[i] = info['braak_bin'].loc[test.index]
-                (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i], y_pred_pol[i],
-                c_val_pol[i], gamma_val_pol[i], y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify(train, y_train, test)
+                if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):
+                    print('entro primeros')
+                    (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test)
+                    #(y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
+                    #(y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test)
+                elif((i >= iters_big) & (num > big_small)):
+                    print('entro big iters')
+                    (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test,
+                    C_range = np.unique(c_val_rbf[0:iters_big]),gamma_range = np.unique(gamma_val_rbf[0:iters_big]))
+                    #(y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,
+                    #C_range = np.unique(c_val_pol[0:iters_big]),gamma_range = np.unique(gamma_val_pol[0:iters_big]))
+                    #(y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test,C_range = np.unique(c_val_lin[0:iters_big]))
+                elif((i >= iters_small) & (num < big_small)):
+                    print('entro small iters')
+                    (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test,
+                    C_range = np.unique(c_val_rbf[0:iters_small]),gamma_range = np.unique(gamma_val_rbf[0:iters_small]))
+                    #(y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,
+                    #C_range = np.unique(c_val_pol[0:iters_small]),gamma_range = np.unique(gamma_val_pol[0:iters_small]))
+                    #(y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test,C_range = np.unique(c_val_lin[0:iters_small]))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
              'gamma_rbf': gamma_val_rbf,
