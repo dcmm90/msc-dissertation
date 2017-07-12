@@ -18,7 +18,6 @@ def blockPrint():
 
 def load_data():
     beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
-    save_file = os.path.realpath('../data_str/')
     zipfile = ZipFile(beta_file)
     zipfile.getinfo('GSE59685_betas2.csv').file_size += (2 ** 64) - 1
     betaqn = pd.read_csv(zipfile.open('GSE59685_betas2.csv'),skiprows=(1,2), index_col=0,sep=',')
@@ -42,6 +41,7 @@ def load_data():
 def main():
     tissues=['EC', 'CER', 'WB', 'FC', 'STG']
     for tissue in tissues:
+        save_file = os.path.realpath('../data_str/')
         iters_big = 20
         iters_small = 50
         big_small = 200
@@ -55,6 +55,7 @@ def main():
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
+        print(features_file)
         if features_file.is_file():
             features_per_i = pickle.load( open( features_file, "rb" ) )
         else:
@@ -67,7 +68,7 @@ def main():
                     features_per_i[i] = fs.feature_sel_t_test_parallel(train_full, info, num[0])
                 elif feat_sel == 'fisher':
                     features_per_i[i] = fs.feature_fisher_score(train_full, info, num[0])
-                print("--- %s seconds for feature selection ---" % (time.time() - start_time)
+                print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_per_i, open(features_file, "wb"))
 
         #features_num = [200000]
