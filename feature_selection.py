@@ -30,9 +30,11 @@ def feature_sel_t_test_parallel(betas, info, size):
     std2 = parallelize(betas_c2, std_par)
     denominator = np.sqrt((std1/c1.shape[0])+(std2/c2.shape[0]))
     t_stat = numerator/denominator
-    ind = np.argsort(t_stat)[-size:]
+    #ind = np.argsort(t_stat)[-size:]
+    #ec_feat = betas.iloc[:,ind]
+    ind = np.argsort(t_stat)[::-1]
     ec_feat = betas.iloc[:,ind]
-    return list(ec_feat), ec_feat
+    return list(ec_feat)
 
 
 def feature_fisher_score(betas, info, size):
@@ -51,9 +53,9 @@ def feature_fisher_score(betas, info, size):
     return list(ec_feat), ec_feat
 
 
-
 def parallelize(data, func):
     cores = cpu_count() #Number of CPU cores on your system
+    print('num of cores: %d' %cores)
     partitions = cores #Define as many partitions as you want
     data_split = np.array_split(data, partitions, axis=1)
     pool = Pool(cores)
