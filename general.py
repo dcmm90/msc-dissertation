@@ -93,7 +93,7 @@ def main():
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 print('features selected')
                 test = ec.loc[ec.index == ec.index[i]]
-                test = test.loc[:,features]
+                test = test[features_per_i[i][0:num]]
                 y_train = info['braak_bin'].loc[train.index]
                 y_true[i] = info['braak_bin'].loc[test.index]
                 if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):
