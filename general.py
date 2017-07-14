@@ -52,7 +52,8 @@ def main():
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
         samples = ec.shape[0]
-        features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
+        features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
+        #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
