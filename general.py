@@ -130,8 +130,8 @@ def main():
              'y_lin': y_pred_lin,
             })
             pickle.dump(predictions, open(save_file + "/pred_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
-            pickle.dump(features_sel, open(save_file + "/feat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
-            features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
+            #pickle.dump(features_sel, open(save_file + "/feat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+            #features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
             svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                 np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                 np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
