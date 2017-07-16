@@ -40,11 +40,12 @@ def load_data():
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['WB', 'FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
-        iters_big = 20
-        iters_small = 50
+        iters_big = 10
+        iters_small = 30
         big_small = 200
         feat_sel = 't_test'
         betaqn, info = load_data()
