@@ -41,7 +41,7 @@ def load_data():
 
 def main():
     #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
-    tissues=['WB', 'FC', 'STG']
+    tissues=['FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
         iters_big = 10
@@ -53,10 +53,14 @@ def main():
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
         samples = ec.shape[0]
+
         features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
+        if tissue == 'FC':
+            features_num = [20, 10]
+                
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
         my_file = Path(features_file)
         if my_file.is_file():
@@ -70,7 +74,7 @@ def main():
                 if feat_sel == 't_test':
                     features_per_i[i] = fs.feature_sel_t_test_parallel(train_full, info, features_num[0])
                 elif feat_sel == 'fisher':
-                    features_per_i[i] = fs.feature_fisher_score(train_full, info, features_num[0])
+                    features_per_i[i] = fs.feature_fisher_score_parallel(train_full, info, features_num[0])
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_per_i, open(features_file, "wb"))
 
