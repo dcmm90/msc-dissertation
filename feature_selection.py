@@ -69,7 +69,7 @@ def feature_fisher_score_parallel(betas, info, size):
     fisher_score = numerator/denominator
     ind = np.argsort(fisher_score)[::-1]
     ec_feat = betas.iloc[:,ind]
-    return list(ec_feat)
+    return list(ec_feat)[0:size]
 
 
 def parallelize(data, func):

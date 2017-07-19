@@ -143,20 +143,28 @@ def PCA_components(tissue, info, betas, reduced, standardize = 0):
 
 
 def main():
-    betaqn = pd.read_csv('GSE59685_betas2.csv',skiprows=(1,2),index_col=0)
+    beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
+    zipfile = ZipFile(beta_file)
+    zipfile.getinfo('GSE59685_betas2.csv').file_size += (2 ** 64) - 1
+    betaqn = pd.read_csv(zipfile.open('GSE59685_betas2.csv'),skiprows=(1,2), index_col=0,sep=',')
     betaqn = betaqn.T
 
     var = betaqn.var(axis=0)
     ind = np.argsort(var)[-5000:]
     red_beta = betaqn.iloc[:,ind]
 
-    info = pd.read_csv('info.csv')
+    info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
     info = info.drop('Unnamed: 0', 1)
 
     info.loc[(info.braak_stage=='5') | (info.braak_stage=='6'),'braak_bin'] = 1
     cond = ((info.braak_stage=='0') | (info.braak_stage=='1') | (info.braak_stage=='2') |
             (info.braak_stage=='3') | (info.braak_stage=='4'))
     info.loc[cond ,'braak_bin'] = 0
+    info.loc[info.source_tissue == 'entorhinal cortex', 'tissue'] = 'EC'
+    info.loc[info.source_tissue == 'whole blood', 'tissue'] = 'WB'
+    info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
+    info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
+    info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
 
     tissue=['all', 'entorhinal cortex', 'cerebellum', 'frontal cortex', 'superior temporal gyrus','whole blood']
     stage = ['0','1','2','3','4','5','6']

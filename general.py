@@ -40,14 +40,14 @@ def load_data():
 
 
 def main():
-    #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
-    tissues=['FC', 'STG']
+    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    #tissues=['FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
         iters_big = 10
         iters_small = 30
         big_small = 200
-        feat_sel = 't_test'
+        feat_sel = 'fisher'
         betaqn, info = load_data()
 
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
@@ -58,9 +58,7 @@ def main():
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
-        if tissue == 'FC':
-            features_num = [20, 10]
-                
+
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
         my_file = Path(features_file)
         if my_file.is_file():
@@ -78,7 +76,6 @@ def main():
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_per_i, open(features_file, "wb"))
 
-        #features_num = [200000]
         for num in features_num:
             print(num)
             features_sel = dict.fromkeys(list(ec),0)
