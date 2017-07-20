@@ -58,6 +58,8 @@ def main():
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
+        if tissue == 'EC':
+            features_num = [10]
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
         my_file = Path(features_file)
