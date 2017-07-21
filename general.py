@@ -104,7 +104,11 @@ def main():
                 if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):
                     print('entro primeros')
                     (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test)
-                    (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
+                    if(i==17):
+                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,
+                        C_range = np.unique(c_val_pol[0:17]),gamma_range = np.unique(gamma_val_pol[0:17]))
+                    else:
+                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
                     (y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test)
                 elif((i >= iters_big) & (num > big_small)):
                     print('entro big iters')
