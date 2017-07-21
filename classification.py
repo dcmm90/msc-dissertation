@@ -25,7 +25,7 @@ def SVM_classify_rbf(train, y_train, test,C_range = np.logspace(-2, 10, 13),gamm
 def SVM_classify_poly(train, y_train, test,C_range = np.logspace(-2, 10, 13),gamma_range = np.logspace(-9, 3, 13)):
     print('SVM-polynomial')
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly']}]
-    svr = svm.SVC(max_iter=10e10, random_state=1234)
+    svr = svm.SVC(max_iter=10e8, random_state=1234)
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     y_pol = clf.predict(test)[0]
