@@ -57,6 +57,8 @@ def main():
         features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
+        if(tissue=='CER'):
+            features_num = [10]
 
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
@@ -101,8 +103,11 @@ def main():
                 y_true[i] = info['braak_bin'].loc[test.index]
                 if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):
                     print('entro primeros')
+                    if(num==10):
+                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,,C_range = np.logspace(-1, 10, 10),gamma_range = np.logspace(-3, 3, 8))
+                    else:
+                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
                     (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test)
-                    (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
                     (y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test)
                 elif((i >= iters_big) & (num > big_small)):
                     print('entro big iters')
