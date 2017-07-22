@@ -41,7 +41,7 @@ def load_data():
 
 def main():
     #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
-    tissues=['CER', 'WB', 'FC', 'STG']
+    tissues=['WB', 'FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
         iters_big = 10
@@ -54,12 +54,9 @@ def main():
         svm_accuracy = {}
         samples = ec.shape[0]
 
-        features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
+        features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20]
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
-        if(tissue=='CER'):
-            features_num = [10]
-
 
         features_file = save_file + "/features_%s_%s.p" % (tissue, feat_sel)
         my_file = Path(features_file)
