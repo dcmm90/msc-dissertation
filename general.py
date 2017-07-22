@@ -104,7 +104,8 @@ def main():
                 if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):
                     print('entro primeros')
                     if(num==10):
-                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,,C_range = np.logspace(-1, 10, 10),gamma_range = np.logspace(-3, 3, 8))
+                        (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,
+                        C_range = np.logspace(-1, 10, 10),gamma_range = np.logspace(-3, 3, 8))
                     else:
                         (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
                     (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test)
