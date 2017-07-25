@@ -46,7 +46,7 @@ def train_all(betaqn, info):
         save_file = os.path.realpath('../data_str/')
         feat_sel = 't_test'
         if(tissue == 'ALL'):
-            ec = betaqn.loc[info.braak_stage != 'Exclude'].index]
+            ec = betaqn.loc[info[info.braak_stage != 'Exclude'].index]
         elif(tissue == 'ALL3'):
             ec = betaqn.loc[info[((info.tissue == 'EC')|(info.tissue == 'FC')|(info.tissue == 'STG')) & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
