@@ -42,7 +42,7 @@ def load_data():
     return (betaqn, info)
 
 def train_all(betaqn, info):
-    tissues=['ALL', 'ALL3']
+    tissues=['ALL3']
     #tissues=['WB', 'FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
