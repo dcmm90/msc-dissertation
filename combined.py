@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
+from sklearn import preprocessing
 import pickle
 import classification as cl
 import feature_selection as fs
@@ -51,7 +52,7 @@ def train_all(betaqn, info):
             ec = betaqn.loc[info[((info.tissue == 'EC')|(info.tissue == 'FC')|(info.tissue == 'STG')) & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
         samples = ec.shape[0]
-        features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20]
+        features_num = [50000, 1000, 500, 250, 100, 75, 50, 20]
         for num in features_num:
             print(num)
             features_per_i = {}
