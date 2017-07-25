@@ -13,6 +13,7 @@ from zipfile import ZipFile
 import sys, os
 from os.path import join, dirname, abspath
 from pathlib import Path
+import gc
 
 # Disable
 def blockPrint():
@@ -112,6 +113,7 @@ def train_all(betaqn, info):
 
 
 def main():
+    gc.collect()
     betaqn, info = load_data()
     train_all(betaqn, info)
 
