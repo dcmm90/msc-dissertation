@@ -42,14 +42,14 @@ def load_data():
 def main():
     #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
     tissues=['WB', 'FC', 'STG']
+    betaqn, info = load_data()
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
         iters_big = 10
         iters_small = 30
         big_small = 200
         feat_sel = 'fisher'
-        betaqn, info = load_data()
-
+        
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
         samples = ec.shape[0]

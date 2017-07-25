@@ -36,6 +36,25 @@ def feature_sel_t_test_parallel(betas, info, size):
     ec_feat = betas.iloc[:,ind]
     return list(ec_feat)
 
+def feature_sel_t_test_group(betas, cat, size):
+    c_info = info.loc[betas.index]
+    c1 = cat[cat == 0].index
+    c2 = cat[cat == 1].index
+    betas_c1 = betas.loc[c1]
+    betas_c2 = betas.loc[c2]
+    m1 = parallelize(betas_c1, mean_par)
+    m2 = parallelize(betas_c2, mean_par)
+    numerator = np.absolute(m1 - m2)
+    std1 = parallelize(betas_c1, std_par)
+    std2 = parallelize(betas_c2, std_par)
+    denominator = np.sqrt((std1/c1.shape[0])+(std2/c2.shape[0]))
+    t_stat = numerator/denominator
+    #ind = np.argsort(t_stat)[-size:]
+    #ec_feat = betas.iloc[:,ind]
+    ind = np.argsort(t_stat)[::-1]
+    ec_feat = betas.iloc[:,ind]
+    return list(ec_feat)
+
 
 def feature_fisher_score(betas, info, size):
     c_info = info.loc[betas.index]
@@ -56,6 +75,25 @@ def feature_fisher_score_parallel(betas, info, size):
     c_info = info.loc[betas.index]
     c1 = c_info[c_info['braak_bin'] == 0].index
     c2 = c_info[c_info['braak_bin'] == 1].index
+    betas_c1 = betas.loc[c1]
+    betas_c2 = betas.loc[c2]
+    m = parallelize(betas, mean_par)
+    m1 = parallelize(betas_c1, mean_par)
+    m2 = parallelize(betas_c2, mean_par)
+    var1 = parallelize(betas_c1, var_par)
+    var2 = parallelize(betas_c2, var_par)
+
+    numerator = c1.shape[0]*np.power(m1 - m,2) + c2.shape[0]*np.power(m2 - m,2)
+    denominator = ((var1 * c1.shape[0]) + (var2 * c2.shape[0]))
+    fisher_score = numerator/denominator
+    ind = np.argsort(fisher_score)[::-1]
+    ec_feat = betas.iloc[:,ind]
+    return list(ec_feat)[0:size]
+
+def feature_fisher_score_group(betas, cat, size):
+    c_info = info.loc[betas.index]
+    c1 = cat[cat == 0].index
+    c2 = cat[cat == 1].index
     betas_c1 = betas.loc[c1]
     betas_c2 = betas.loc[c2]
     m = parallelize(betas, mean_par)
