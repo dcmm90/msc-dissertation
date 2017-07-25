@@ -37,7 +37,6 @@ def feature_sel_t_test_parallel(betas, info, size):
     return list(ec_feat)
 
 def feature_sel_t_test_group(betas, cat, size):
-    c_info = info.loc[betas.index]
     c1 = cat[cat == 0].index
     c2 = cat[cat == 1].index
     betas_c1 = betas.loc[c1]
@@ -91,7 +90,6 @@ def feature_fisher_score_parallel(betas, info, size):
     return list(ec_feat)[0:size]
 
 def feature_fisher_score_group(betas, cat, size):
-    c_info = info.loc[betas.index]
     c1 = cat[cat == 0].index
     c2 = cat[cat == 1].index
     betas_c1 = betas.loc[c1]
