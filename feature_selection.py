@@ -13,7 +13,9 @@ def feature_sel_rfe(betas, info, size):
     svc = SVC(kernel="linear", C=1)
     rfe = RFE(estimator=svc, n_features_to_select=size, step=0.01)
     rfe.fit(X, y)
+    ranking = rfe.ranking_
     selection = X.iloc[:,np.where(ranking == 1)[0]]
+    print(selection.shape)
     return list(selection)
 
 
