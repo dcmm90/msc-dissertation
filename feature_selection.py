@@ -1,6 +1,21 @@
 import numpy as np
 import pandas as pd
 from multiprocessing import cpu_count, Pool
+from sklearn.svm import SVC
+from sklearn.datasets import load_digits
+from sklearn.feature_selection import RFE
+
+
+def feature_sel_rfe(betas, info, size):
+    c_info = info.loc[betas.index]
+    y = c_info.braak_bin
+    X = betas
+    svc = SVC(kernel="linear", C=1)
+    rfe = RFE(estimator=svc, n_features_to_select=size, step=0.01)
+    rfe.fit(X, y)
+    selection = X.iloc[:,np.where(ranking == 1)[0]]
+    return list(selection)
+
 
 def feature_sel_t_test(betas, info, size):
     c_info = info.loc[betas.index]
