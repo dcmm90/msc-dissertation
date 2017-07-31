@@ -11,7 +11,7 @@ def feature_sel_rfe(betas, info, size):
     y = c_info.braak_bin
     X = betas
     svc = SVC(kernel="linear", C=1)
-    rfe = RFE(estimator=svc, n_features_to_select=size, step=0.01)
+    rfe = RFE(estimator=svc, n_features_to_select=size, step=0.1)
     rfe.fit(X, y)
     ranking = rfe.ranking_
     selection = X.iloc[:,np.where(ranking == 1)[0]]
