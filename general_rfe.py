@@ -54,7 +54,8 @@ def main():
         svm_accuracy = {}
         samples = ec.shape[0]
 
-        features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20]
+        features_num = [20, 50, 75, 100, 250, 500, 1000, 50000]
+        #features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20]
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
         for num in features_num:
@@ -68,7 +69,7 @@ def main():
                     print('iteracion %d para feature sel' %i)
                     start_time = time.time()
                     train_full = ec.loc[ec.index != ec.index[i]]
-                    features_per_i[i] = fs.feature_sel_rfe(train_full, info, features_num[0])
+                    features_per_i[i] = fs.feature_sel_rfe(train_full, info, num)
                     print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_per_i, open(features_file, "wb"))
 
