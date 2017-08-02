@@ -40,7 +40,7 @@ def load_data():
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['CER', 'WB', 'FC', 'STG']
     #tissues=['WB', 'FC', 'STG']
     betaqn, info = load_data()
     feat_sel = 'rfe'
@@ -54,7 +54,7 @@ def main():
         svm_accuracy = {}
         samples = ec.shape[0]
 
-        features_num = [20, 50, 75, 100, 250, 500, 1000, 50000]
+        features_num = [20, 50, 75, 100, 250, 500, 1000, 50000, 100000]
         #features_num = [100000, 50000, 1000, 500, 250, 100, 75, 50, 20]
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]

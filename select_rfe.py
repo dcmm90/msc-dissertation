@@ -40,7 +40,7 @@ def load_data():
 
 
 def main():
-    tissues=['CER', 'WB', 'FC', 'STG']
+    tissues=['STG']
     #tissues=['WB', 'FC', 'STG']
     betaqn, info = load_data()
     feat_sel = 'rfe'
@@ -54,7 +54,7 @@ def main():
         svm_accuracy = {}
         samples = ec.shape[0]
 
-        features_num = [20, 50, 75, 100, 250, 500, 1000, 50000, 100000]
+        features_num = [75, 100, 250, 500, 1000, 50000, 100000]
         for num in features_num:
             features_file = save_file + "/features_%s_%s_%d.p" % (tissue, feat_sel, num)
             my_file = Path(features_file)
