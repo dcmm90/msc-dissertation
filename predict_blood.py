@@ -1,3 +1,9 @@
+# ------------
+# Diana Carolina Montañes M.
+# predict_blood: train in all tissues(3) and
+# predict on blood sample
+
+
 from __future__ import division
 import time
 import pandas as pd
@@ -12,10 +18,6 @@ from zipfile import ZipFile
 import sys, os
 from os.path import join, dirname, abspath
 from pathlib import Path
-
-# Disable
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
 
 
 def load_data():
