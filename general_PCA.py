@@ -12,6 +12,7 @@ import sys, os
 from os.path import join, dirname, abspath
 from pathlib import Path
 from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 # Disable
 def blockPrint():
