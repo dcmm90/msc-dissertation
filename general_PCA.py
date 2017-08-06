@@ -83,7 +83,7 @@ def main():
                 test_sc = scale.transform(test_full)
                 #PCA
                 pca = PCA(n_components=num)
-                pca.fit(train)
+                pca.fit(train_sc)
                 train = pca.transform(train_sc)
                 test = pca.transform(test_sc)
                 if(((i < iters_big) & (num > big_small)) | ((i < iters_small) & (num < big_small))):

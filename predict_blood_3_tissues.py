@@ -43,7 +43,7 @@ def load_data():
 
 def test_blood(betaqn, info):
     save_file = os.path.realpath('../data_str/')
-    feat_sel = 't_test'
+    feat_sel = 'rfe'
     test_all = betaqn.loc[info[(info.tissue == 'WB') & (info.braak_stage != 'Exclude')].index]
     ec = betaqn.loc[info[((info.tissue == 'EC')|(info.tissue == 'FC')|(info.tissue == 'STG')) & (info.braak_stage != 'Exclude')].index]
     svm_accuracy = {}
@@ -69,6 +69,8 @@ def test_blood(betaqn, info):
             features_per_i[i] = fs.feature_sel_t_test_group(X_train, y_train, num)
         elif feat_sel == 'fisher':
             features_per_i[i] = fs.feature_fisher_score_group(X_train, y_train, num)
+        elif feat_sel == 'rfe':
+            features_per_i[i] = fs.feature_sel_rfe_group(X_train, y_train, num)
         start_time = time.time()
         train = X_train[features_per_i[i]]
         print("--- %s seconds for feature selection ---" % (time.time() - start_time))

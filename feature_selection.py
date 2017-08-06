@@ -19,6 +19,18 @@ def feature_sel_rfe(betas, info, size):
     return list(selection)
 
 
+def feature_sel_rfe_group(betas, cat, size):
+    y = cat
+    X = betas
+    svc = SVC(kernel="linear", C=1)
+    rfe = RFE(estimator=svc, n_features_to_select=size, step=0.1)
+    rfe.fit(X, y)
+    ranking = rfe.ranking_
+    selection = X.iloc[:,np.where(ranking == 1)[0]]
+    print(selection.shape)
+    return list(selection)
+
+
 def feature_sel_t_test(betas, info, size):
     c_info = info.loc[betas.index]
     c1 = c_info[c_info['braak_bin'] == 0].index

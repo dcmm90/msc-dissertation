@@ -131,7 +131,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
 def main():
     betaqn, info = load_data()
-    for feat_sel in ['t_test', 'fisher']:
+    for feat_sel in ['rfe']:
         train_blood_itsfeatures(betaqn, info, feat_sel)
 
 

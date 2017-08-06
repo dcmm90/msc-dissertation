@@ -47,7 +47,7 @@ def main():
         iters_big = 10
         iters_small = 30
         big_small = 200
-        feat_sel = 't_test'
+        feat_sel = 'rfe'
 
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         blood = betaqn.loc[info[(info.tissue == 'WB') & (info.braak_stage != 'Exclude')].index]
@@ -71,6 +71,17 @@ def main():
                 features_all = fs.feature_fisher_score_parallel(ec, info, features_num[0])
             print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_all, open(features_file, "wb"))
+
+        if feat_sel == 'rfe':
+            for num in features_num:
+                print('iteracion para feature sel %d' % num)
+                features_file = save_file + "/features_blood_%s_%s_%d.p" % (tissue, feat_sel, num)
+                my_file = Path(features_file)
+                if my_file.is_file():
+                    features_all = pickle.load( open( features_file, "rb" ) )
+                else:
+                    features_all = fs.feature_fisher_score_parallel(ec, info, num)
+
 
         for num in features_num:
             print(num)
