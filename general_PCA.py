@@ -74,8 +74,8 @@ def main():
                 print('iteracion %d para %d features' %(i,num))
                 train_full = ec.loc[ec.index != ec.index[i]]
                 test_full = ec.loc[ec.index == ec.index[i]]
-                y_train = info['braak_bin'].loc[train.index]
-                y_true[i] = info['braak_bin'].loc[test.index]
+                y_train = info['braak_bin'].loc[train_full.index]
+                y_true[i] = info['braak_bin'].loc[test_full.index]
                 #SCALING
                 scale = preprocessing.StandardScaler().fit(train_full)
                 train_sc = scale.transform(train_full)
