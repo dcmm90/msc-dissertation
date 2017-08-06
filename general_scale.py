@@ -42,7 +42,7 @@ def load_data():
 
 def main():
     #tissues=['EC', 'CER', 'WB', 'FC', 'STG']
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['CER', 'WB', 'FC', 'STG']
     betaqn, info = load_data()
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
