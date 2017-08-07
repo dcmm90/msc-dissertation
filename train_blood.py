@@ -59,28 +59,29 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
         features_file = save_file + "/features_train_blood_%s_%s.p" % (tissue, feat_sel)
         my_file = Path(features_file)
-        if my_file.is_file():
-            features_all = pickle.load( open( features_file, "rb" ) )
-        else:
-            print('iteracion para feature sel')
-            start_time = time.time()
-            if feat_sel == 't_test':
-                features_all = fs.feature_sel_t_test_parallel(ec, info, features_num[0])
-            elif feat_sel == 'fisher':
-                features_all = fs.feature_fisher_score_parallel(ec, info, features_num[0])
-            print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-            pickle.dump(features_all, open(features_file, "wb"))
+        if feat_sel == 't_test' or feat_sel == 'fisher' :
+            if my_file.is_file():
+                features_all = pickle.load( open( features_file, "rb" ) )
+            else:
+                print('iteracion para feature sel')
+                start_time = time.time()
+                if feat_sel == 't_test':
+                    features_all = fs.feature_sel_t_test_parallel(ec, info, features_num[0])
+                elif feat_sel == 'fisher':
+                    features_all = fs.feature_fisher_score_parallel(ec, info, features_num[0])
+                print("--- %s seconds for feature selection ---" % (time.time() - start_time))
+                pickle.dump(features_all, open(features_file, "wb"))
 
         if feat_sel == 'rfe':
             for num in features_num:
-                features_file = save_file + "/features_train_blood_%s_%s_%d.p" % (tissue, feat_sel)
+                features_file = save_file + "/features_train_blood_%s_%s_%d.p" % (tissue, feat_sel, num)
                 my_file = Path(features_file)
                 if my_file.is_file():
                     features_all = pickle.load( open( features_file, "rb" ) )
                 else:
                     print('iteracion para feature sel')
                     start_time = time.time()
-                    features_all = fs.feature_sel_rfe(train_full, info, num)
+                    features_all = fs.feature_sel_rfe(ec, info, num)
                     print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                     pickle.dump(features_all, open(features_file, "wb"))
 

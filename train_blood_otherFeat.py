@@ -57,27 +57,61 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
-        features_file = "../DATA/predict_on_blood/features_blood_%s_%s.p" % (tissue, feat_sel)
-        my_file = Path(features_file)
-        if my_file.is_file():
-            features_all = pickle.load( open( features_file, "rb" ) )
-        else:
-            print('No features file')
+        if feat_sel == 't_test' or feat_sel == 'fisher' :
+            features_file = "../DATA/predict_on_blood/features_blood_%s_%s.p" % (tissue, feat_sel)
+            my_file = Path(features_file)
+            if my_file.is_file():
+                features_all = pickle.load( open( features_file, "rb" ) )
+            else:
+                print('No features file')
 
-        '''
         if feat_sel == 'rfe':
             for num in features_num:
-                features_file = save_file + "/features_train_blood_%s_%s_%d.p" % (tissue, feat_sel)
+                features_file = "../DATA/predict_on_blood/features_blood_%s_%s_%d.p" % (tissue, feat_sel,num)
                 my_file = Path(features_file)
                 if my_file.is_file():
                     features_all = pickle.load( open( features_file, "rb" ) )
                 else:
-                    print('iteracion para feature sel')
-                    start_time = time.time()
-                    features_all = fs.feature_sel_rfe(train_full, info, num)
-                    print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                    pickle.dump(features_all, open(features_file, "wb"))
-        '''
+                    print('No features file')
+                print(num)
+                y_true = np.zeros(samples)
+                y_pred_rbf = np.zeros(samples)
+                c_val_rbf = np.zeros(samples)
+                gamma_val_rbf = np.zeros(samples)
+                y_pred_lin = np.zeros(samples)
+                c_val_lin = np.zeros(samples)
+                y_pred_pol = np.zeros(samples)
+                c_val_pol = np.zeros(samples)
+                gamma_val_pol = np.zeros(samples)
+
+                print('iteracion %d features' %(num))
+                train_full = blood
+                start_time = time.time()
+                train = train_full[features_all[0:num]]
+                print("--- %s seconds for feature selection ---" % (time.time() - start_time))
+                print('features selected')
+                test = ec
+                test = test[features_all[0:num]]
+                y_train = info['braak_bin'].loc[train.index]
+                y_true = info['braak_bin'].loc[test.index]
+
+                (y_pred_rbf, c_rbf, gamma_rbf) = cl.SVM_classify_rbf_all(train, y_train, test)
+                (y_pred_pol, c_pol, gamma_pol) = cl.SVM_classify_poly_all(train, y_train, test)
+                (y_pred_lin, c_lin) = cl.SVM_classify_lin_all(train, y_train, test)
+
+                predictions = pd.DataFrame(
+                {'y_true': y_true,
+                 'y_rbf': y_pred_rbf,
+                 'y_poly': y_pred_pol,
+                 'y_lin': y_pred_lin,
+                })
+                pickle.dump(predictions, open(save_file + "/pred_train_blood_otherFeat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+                #pickle.dump(features_sel, open(save_file + "/feat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+                #features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
+                svm_accuracy[num] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
+                                    np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
+                                    np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
+            pickle.dump(svm_accuracy, open(save_file + "/accuracy_train_blood_otherFeat_%s_%s.p" % (tissue, feat_sel), "wb"))
 
         for num in features_num:
             print(num)
@@ -124,7 +158,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
 def main():
     betaqn, info = load_data()
-    for feat_sel in ['t_test', 'fisher']:
+    for feat_sel in ['rfe']:
         train_blood_itsfeatures(betaqn, info, feat_sel)
 
 
