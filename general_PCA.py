@@ -42,7 +42,7 @@ def load_data():
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['CER', 'WB', 'FC', 'STG']
     #tissues=['WB', 'FC', 'STG']
     betaqn, info = load_data()
     for tissue in tissues:
