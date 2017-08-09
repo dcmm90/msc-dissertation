@@ -44,10 +44,6 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
     tissues=['EC', 'CER', 'FC', 'STG']
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
-        iters_big = 10
-        iters_small = 30
-        big_small = 200
-
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         blood = betaqn.loc[info[(info.tissue == 'WB') & (info.braak_stage != 'Exclude')].index]
         svm_accuracy = {}
@@ -57,7 +53,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
         #features_num = [200000, 100000, 50000, 1000, 500, 250, 100, 75, 50, 20, 10]
         #features_num = [500, 250, 100, 75, 50, 20, 10]
 
-        features_file = save_file + "/features_train_blood_%s_%s.p" % (tissue, feat_sel)
+        features_file = save_file + "/features_train_blood_%s.p" % (feat_sel)
         my_file = Path(features_file)
         if feat_sel == 't_test' or feat_sel == 'fisher' :
             if my_file.is_file():
@@ -66,9 +62,9 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
                 print('iteracion para feature sel')
                 start_time = time.time()
                 if feat_sel == 't_test':
-                    features_all = fs.feature_sel_t_test_parallel(ec, info, features_num[0])
+                    features_all = fs.feature_sel_t_test_parallel(blood, info, features_num[0])
                 elif feat_sel == 'fisher':
-                    features_all = fs.feature_fisher_score_parallel(ec, info, features_num[0])
+                    features_all = fs.feature_fisher_score_parallel(blood, info, features_num[0])
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
 
@@ -81,21 +77,21 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
                 else:
                     print('iteracion para feature sel')
                     start_time = time.time()
-                    features_all = fs.feature_sel_rfe(ec, info, num)
+                    features_all = fs.feature_sel_rfe(blood, info, num)
                     print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                     pickle.dump(features_all, open(features_file, "wb"))
 
         for num in features_num:
             print(num)
-            params = pickle.load( open("../DATA/%s/params_%s_%s_%d.p" %(feat_sel,'WB', feat_sel, num), "rb" ) )
+
             y_pred_rbf = np.zeros(samples)
-            c_val_rbf = params[ 'C_rbf']
-            gamma_val_rbf = params[ 'gamma_rbf']
+            c_val_rbf = np.zeros(samples)
+            gamma_val_rbf = np.zeros(samples)
             y_pred_lin = np.zeros(samples)
-            c_val_lin = params['C_lin']
+            c_val_lin = np.zeros(samples)
             y_pred_pol = np.zeros(samples)
-            c_val_pol = params['C_poly']
-            gamma_val_pol = params['gamma_poly']
+            c_val_pol = np.zeros(samples)
+            gamma_val_pol = np.zeros(samples)
 
             print('iteracion %d features' %(num))
             train_full = blood
@@ -108,11 +104,9 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
             y_train = info['braak_bin'].loc[train.index]
             y_true = info['braak_bin'].loc[test.index]
 
-            (y_pred_rbf, c_rbf, gamma_rbf) = cl.SVM_classify_rbf_all(train, y_train, test,
-            C_range = np.unique(c_val_rbf),gamma_range = np.unique(gamma_val_rbf))
-            (y_pred_pol, c_pol, gamma_pol) = cl.SVM_classify_poly_all(train, y_train, test,
-            C_range = np.unique(c_val_pol),gamma_range = np.unique(gamma_val_pol))
-            (y_pred_lin, c_lin) = cl.SVM_classify_lin_all(train, y_train, test,C_range = np.unique(c_val_lin))
+            (y_pred_rbf, c_rbf, gamma_rbf) = cl.SVM_classify_rbf_all(train, y_train, test)
+            (y_pred_pol, c_pol, gamma_pol) = cl.SVM_classify_poly_all(train, y_train, test)
+            (y_pred_lin, c_lin) = cl.SVM_classify_lin_all(train, y_train, test)
 
             predictions = pd.DataFrame(
             {'y_true': y_true,
@@ -132,7 +126,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
 def main():
     betaqn, info = load_data()
-    for feat_sel in ['rfe']:
+    for feat_sel in ['rfe','t_test','fisher']:
         train_blood_itsfeatures(betaqn, info, feat_sel)
 
 
