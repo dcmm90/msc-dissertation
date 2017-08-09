@@ -48,7 +48,6 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
     blood = betaqn.loc[info[(info.tissue == 'WB') & (info.braak_stage != 'Exclude')].index]
     svm_accuracy = {}
-    samples = ec.shape[0]
     cat = info['braak_bin'].loc[blood.index]
 
     for num in features_num:
@@ -69,6 +68,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
 
             for tissue in tissues:
                 ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
+                samples = ec.shape[0]
                 y_pred_rbf = np.zeros(samples)
                 y_pred_lin = np.zeros(samples)
                 train_full = cur_ec
@@ -91,13 +91,13 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
                 svm_accuracy[tissue] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
                 print(svm_accuracy[tissue])
-            pickle.dump(svm_accuracy, open(save_file + "/accuracy_train_blood_%s_%d_%d.p" % (feat_sel,num,i), "wb"))
+            pickle.dump(svm_accuracy, open(save_file + "/accuracy_train_blood_%s_%d_%d.p" % (feat_sel,i), "wb"))
             i+=1
 
 
 def main():
     betaqn, info = load_data()
-    for feat_sel in ['rfe','t_test','fisher']:
+    for feat_sel in ['t_test','fisher']:
         train_blood_itsfeatures(betaqn, info, feat_sel)
 
 
