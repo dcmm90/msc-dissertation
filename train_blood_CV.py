@@ -91,7 +91,7 @@ def train_blood_itsfeatures(betaqn, info, feat_sel = 't_test'):
                 svm_accuracy[tissue] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
                 print(svm_accuracy[tissue])
-            pickle.dump(svm_accuracy, open(save_file + "/accuracy_train_blood_%s_%d_%d.p" % (feat_sel,i), "wb"))
+            pickle.dump(svm_accuracy, open(save_file + "/accuracy_train_blood_%s_%d_%d.p" % (feat_sel,num,i), "wb"))
             i+=1
 
 
