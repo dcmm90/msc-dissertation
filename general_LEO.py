@@ -40,7 +40,7 @@ def load_data():
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['CER', 'WB', 'FC', 'STG']
     betaqn, info = load_data()
     for tissue in tissues:
         save_file = os.path.realpath('../data_str/')
@@ -75,7 +75,8 @@ def main():
             y_train = info['braak_bin'].loc[train.index]
             y_true[i] = info['braak_bin'].loc[test.index]
             if(i < iters_big):
-                (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test)
+                (y_pred_pol[i], c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly(train, y_train, test,
+                C_range = [0.01,0.1,0.5,1],gamma_range = [0.5,1,1.5])
                 (y_pred_rbf[i], c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf(train, y_train, test)
                 (y_pred_lin[i], c_val_lin[i]) = cl.SVM_classify_lin(train, y_train, test)
             else:
