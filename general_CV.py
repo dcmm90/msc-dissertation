@@ -41,8 +41,8 @@ def load_data():
     return (betaqn, info)
 
 def get_intervals(cv_splits, i, zeros, ones):
-    div_zeros = int(np.ceil(len(zeros)/cv_splits))
-    div_ones = int(np.ceil(len(ones)/cv_splits))
+    div_zeros = int(np.floor(len(zeros)/cv_splits))
+    div_ones = int(np.floor(len(ones)/cv_splits))
     if (i<(cv_splits-1)):
         mini_zero = div_zeros*i
         maxi_zero = (div_zeros*i) + div_zeros
@@ -93,7 +93,6 @@ def main():
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
-                y_true = cat[test_index]
                 samples = test_full.shape[0]
                 start_time = time.time()
                 features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
