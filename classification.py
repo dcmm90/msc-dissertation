@@ -53,7 +53,7 @@ def SVM_classify_lin(train, y_train, test, C_range = np.logspace(-2, 10, 13)):
     c_lin = clf.best_params_['C']
     return (y_lin, c_lin)
 
-def SVM_classify_rbf_all(train, y_train, test,C_range = np.logspace(-5, 9, 15),gamma_range = np.logspace(-11, 3, 15)):
+def SVM_classify_rbf_all(train, y_train, test,C_range = np.logspace(-4, 11, 15),gamma_range = np.logspace(-11, 3, 15)):
     #C_range = np.logspace(-2, 10, 13)
     #gamma_range = np.logspace(-9, 3, 13)
     #C_range = np.logspace(-2, 10, 6)
@@ -70,7 +70,7 @@ def SVM_classify_rbf_all(train, y_train, test,C_range = np.logspace(-5, 9, 15),g
     return (y_rbf, c_rbf, gamma_rbf)
 
 
-def SVM_classify_poly_all(train, y_train, test,C_range = np.logspace(-5, 9, 15),gamma_range = np.logspace(-9, 3, 13)):
+def SVM_classify_poly_all(train, y_train, test,C_range = np.logspace(-4, 11, 15),gamma_range = np.logspace(-9, 3, 13)):
     print('SVM-polynomial')
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly']}]
     svr = svm.SVC()
@@ -82,7 +82,7 @@ def SVM_classify_poly_all(train, y_train, test,C_range = np.logspace(-5, 9, 15),
     return (y_pol, c_pol, gamma_pol)
 
 
-def SVM_classify_lin_all(train, y_train, test, C_range = np.logspace(-5, 9, 15)):
+def SVM_classify_lin_all(train, y_train, test, C_range = np.logspace(-3, 10, 15)):
     print('SVM-linear')
     param_grid = [{'C': C_range, 'kernel': ['linear']}]
     svr = svm.SVC()
