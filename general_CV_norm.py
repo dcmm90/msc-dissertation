@@ -110,13 +110,14 @@ def main():
                 scale = preprocessing.StandardScaler().fit(train)
                 train = scale.transform(train)
                 test = scale.transform(test)
+                y_true = cat[test_index]
+
                 start_time = time.time()
                 (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test)
                 (y_pred_pol,  c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test)
                 (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test)
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
 
-                y_true = cat[test_index]
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
                  'y_rbf': y_pred_rbf,
