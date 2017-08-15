@@ -85,7 +85,7 @@ def feature_fisher_score_parallel(betas, info, size):
 def parallelize(data, func):
     cores = cpu_count() #Number of CPU cores on your system
     #print('num of cores: %d' %cores)
-    partitions = cores/2#Define as many partitions as you want
+    partitions = 10#Define as many partitions as you want
     data_split = np.array_split(data, partitions, axis=1)
     pool = Pool(cores)
     data = pd.concat(pool.map(func, data_split))
