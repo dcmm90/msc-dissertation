@@ -133,7 +133,7 @@ def main():
              'gamma_poly': gamma_val_pol,
              'C_lin': c_val_lin
             })
-            pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, cv), "wb"))
 
 
 
