@@ -61,10 +61,11 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissues=['EC']
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    features_num = [20, 50, 75, 100, 250, 500, 1000]
+    num = 100
+    CV = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
     for tissue in tissues:
         feat_sel = 'fisher'
         open_file = os.path.realpath('../data_str/')
@@ -74,11 +75,11 @@ def main():
         samples = ec.shape[0]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
-        cv_splits = 10
-        div_zeros = np.ceil(len(zeros)/cv_splits)
-        div_ones = np.ceil(len(ones)/cv_splits)
 
-        for num in features_num:
+        for cv in CV:
+            cv_splits = cv
+            div_zeros = np.ceil(len(zeros)/cv_splits)
+            div_ones = np.ceil(len(ones)/cv_splits)
             c_val_rbf = np.zeros(cv_splits)
             gamma_val_rbf = np.zeros(cv_splits)
             c_val_lin = np.zeros(cv_splits)
@@ -88,14 +89,14 @@ def main():
             zeros = np.random.permutation(zeros)
             ones = np.random.permutation(ones)
             for i in range(cv_splits):
-                print('split: %d - num_features: %d' %(i,num))
+                print('split: %d - cv: %d' %(i,cv))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
                 start_time = time.time()
-                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                features_file = open_file + "/features_diffCV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
                 elif feat_sel == 'fisher':
@@ -119,12 +120,12 @@ def main():
                  'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(open_file + "/pred_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
                 print(svm_accuracy[i])
-            pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy, open(open_file + "/accuracy_diffCV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
              'gamma_rbf': gamma_val_rbf,
@@ -132,7 +133,7 @@ def main():
              'gamma_poly': gamma_val_pol,
              'C_lin': c_val_lin
             })
-            pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
 
 
 
