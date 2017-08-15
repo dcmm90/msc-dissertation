@@ -105,7 +105,7 @@ def var_par(data):
 
 def main():
     tissue='EC'
-    ec, info = load_data()
+    betaqn, info = load_data()
     ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     features_num = [20, 50, 75, 100, 250, 500, 1000, 5000, 100000]
