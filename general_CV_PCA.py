@@ -14,11 +14,6 @@ from pathlib import Path
 from sklearn.model_selection import StratifiedKFold
 
 
-# Disable
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-
-
 def load_data():
     beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
     zipfile = ZipFile(beta_file)
@@ -66,7 +61,7 @@ def main():
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     features_num = [20, 50, 75, 100, 250, 500, 1000]
     for tissue in tissues:
-        feat_sel = 'rfe'
+        feat_sel = 'PCA'
         open_file = os.path.realpath('../data_str/')
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
@@ -94,19 +89,15 @@ def main():
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
-                start_time = time.time()
-                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
-                if feat_sel == 't_test':
-                    features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
-                elif feat_sel == 'fisher':
-                    features_all = fs.feature_fisher_score_parallel(train_full, info, num)
-                elif feat_sel == 'rfe':
-                    features_all = fs.feature_sel_rfe(train_full, info, num)
-                print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                pickle.dump(features_all, open(features_file, "wb"))
-
-                train = train_full[features_all[0:num]]
-                test = test_full[features_all[0:num]]
+                #SCALING
+                scale = preprocessing.StandardScaler().fit(train_full)
+                train_sc = scale.transform(train_full)
+                test_sc = scale.transform(test_full)
+                #PCA
+                pca = PCA(n_components=num)
+                pca.fit(train_sc)
+                train = pca.transform(train_sc)
+                test = pca.transform(test_sc)
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
