@@ -104,7 +104,7 @@ def main():
                 start_time = time.time()
                 (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
                 (y_pred_pol,  c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
-                (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,C_range = np.logspace(-2, 11, 30), balance = 1)
+                (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, C_range = np.logspace(-1, 11, 20), balance = 1)
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
 
 
