@@ -12,6 +12,8 @@ import sys, os
 from os.path import join, dirname, abspath
 from pathlib import Path
 from sklearn.model_selection import StratifiedKFold
+from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 
 def load_data():
