@@ -95,6 +95,7 @@ def main():
             y_train = cat[train_index]
             test_full = ec.iloc[test_index]
             samples = test_full.shape[0]
+            samples_tr = train_full.shape[0]
 
             train = train_full[features]
             test = test_full[features]
