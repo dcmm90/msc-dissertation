@@ -65,7 +65,7 @@ def main():
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     num = 100
-    CV = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+    CV = [10, 15]
     for tissue in tissues:
         feat_sel = 'fisher'
         open_file = os.path.realpath('../data_str/')
