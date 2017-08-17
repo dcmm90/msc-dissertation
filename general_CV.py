@@ -64,7 +64,8 @@ def main():
     tissues=['EC', 'CER', 'WB', 'FC', 'STG']
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    features_num = [5000,10000,50000,100000,200000,300000,400000]
+    #[5000,10000,50000,100000,200000,300000,400000]
+    features_num = [20,50,75,100,250,500,1000]
     for tissue in tissues:
         feat_sel = 't_test'
         open_file = os.path.realpath('../data_str/')
@@ -75,8 +76,8 @@ def main():
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
         cv_splits = 10
-        div_zeros = np.ceil(len(zeros)/cv_splits)
-        div_ones = np.ceil(len(ones)/cv_splits)
+        div_zeros = np.ceil(len(nzeros)/cv_splits)
+        div_ones = np.ceil(len(nones)/cv_splits)
 
         for num in features_num:
             c_val_rbf = np.zeros(cv_splits)
@@ -85,8 +86,9 @@ def main():
             c_val_pol = np.zeros(cv_splits)
             gamma_val_pol = np.zeros(cv_splits)
             svm_accuracy = {}
-            zeros = np.random.permutation(zeros)
-            ones = np.random.permutation(ones)
+            svm_accuracy_tr = {}
+            zeros = np.random.permutation(nzeros)
+            ones = np.random.permutation(nones)
             for i in range(cv_splits):
                 print('split: %d - num_features: %d' %(i,num))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
@@ -94,6 +96,7 @@ def main():
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
+                samples_tr = train_full.shape[0]
                 start_time = time.time()
                 features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
                 if feat_sel == 't_test':
@@ -109,12 +112,21 @@ def main():
                 test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
                 start_time = time.time()
-                (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
-                (y_pred_pol,  c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
-                (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, balance = 1)
+                (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
+                (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
+                (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, balance = 1)
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
-
-
+                pred_train = pd.DataFrame(
+                {'y_train': y_train,
+                 'y_tr_rbf': y_tr_rbf,
+                 'y_tr_poly': y_tr_pol,
+                 'y_tr_lin': y_tr_lin,
+                })
+                pickle.dump(pred_train, open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
+                                    np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
+                                    np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
+                print(svm_accuracy_tr[i])
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
                  'y_rbf': y_pred_rbf,
@@ -125,7 +137,9 @@ def main():
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
+
                 print(svm_accuracy[i])
+            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,

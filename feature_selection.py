@@ -63,7 +63,7 @@ def feature_sel_t_test_parallel(betas, info, size):
     #ec_feat = betas.iloc[:,ind]
     ind = np.argsort(t_stat)[::-1]
     ec_feat = betas.iloc[:,ind]
-    return list(ec_feat)
+    return list(ec_feat)[0:size]
 
 def feature_sel_t_test_group(betas, cat, size):
     c1 = cat[cat == 0].index
