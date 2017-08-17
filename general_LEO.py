@@ -77,6 +77,7 @@ def main():
         div_zeros = np.ceil(len(nzeros)/cv_splits)
         div_ones = np.ceil(len(nones)/cv_splits)
         svm_accuracy = {}
+        svm_accuracy_tr = {}
         samples = ec.shape[0]
 
         c_val_rbf = np.zeros(cv_splits)
@@ -100,10 +101,10 @@ def main():
             y_train = info['braak_bin'].loc[train.index]
             y_true = cat[test_index]
             start_time = time.time()
-            (y_pred_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
+            (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
             C_range = [0.01,0.05,0.1,0.5,1],gamma_range = [0.5,1,1.5])
-            (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true)
-            (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test,y_true)
+            (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true)
+            (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true)
             print("--- %s seconds for classification ---" % (time.time() - start_time))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
@@ -120,12 +121,24 @@ def main():
              'y_lin': y_pred_lin,
             })
             pickle.dump(predictions, open(save_file + "/pred_LEO_%s_%d.p" %(tissue,i), "wb"))
+            pred_train = pd.DataFrame(
+            {'y_train': y_train,
+             'y_tr_rbf': y_tr_rbf,
+             'y_tr_poly': y_tr_pol,
+             'y_tr_lin': y_tr_lin,
+            })
+            pickle.dump(pred_train, open(save_file + "/pred_LEO_tr_%s_%d.p" %(tissue, i), "wb"))
             #pickle.dump(features_sel, open(save_file + "/feat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
             #features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
             svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                 np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                 np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
+            svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
+                                np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
+                                np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
+            print(svm_accuracy_tr[i])
         pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO_%s.p" % (tissue), "wb"))
+        pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO_tr_%s.p" % (tissue), "wb"))
 
 
 
