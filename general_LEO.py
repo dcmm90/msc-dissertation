@@ -100,9 +100,9 @@ def main():
             y_train = info['braak_bin'].loc[train.index]
             y_true = cat[test_index]
             start_time = time.time()
-            (y_pred_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, y_true, test,
+            (y_pred_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
             C_range = [0.01,0.05,0.1,0.5,1],gamma_range = [0.5,1,1.5])
-            (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test,y_true)
+            (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true)
             (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test,y_true)
             print("--- %s seconds for classification ---" % (time.time() - start_time))
             parameters = pd.DataFrame(

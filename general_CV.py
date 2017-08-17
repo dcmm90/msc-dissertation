@@ -73,8 +73,8 @@ def main():
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
-        zeros = np.where(cat == 0)[0]
-        ones = np.where(cat == 1)[0]
+        nzeros = np.where(cat == 0)[0]
+        nones = np.where(cat == 1)[0]
         cv_splits = 10
         div_zeros = np.ceil(len(nzeros)/cv_splits)
         div_ones = np.ceil(len(nones)/cv_splits)
