@@ -67,7 +67,7 @@ def main():
     #[5000,10000,50000,100000,200000,300000,400000]
     features_num = [20,50,75,100,250,500,1000]
     for tissue in tissues:
-        feat_sel = 'rfe'
+        feat_sel = 'fisher'
         open_file = os.path.realpath('../data_str/')
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
@@ -75,7 +75,7 @@ def main():
         samples = ec.shape[0]
         nzeros = np.where(cat == 0)[0]
         nones = np.where(cat == 1)[0]
-        cv_splits = 10
+        cv_splits = 5
         div_zeros = np.ceil(len(nzeros)/cv_splits)
         div_ones = np.ceil(len(nones)/cv_splits)
 
