@@ -82,6 +82,7 @@ def main():
             c_val_pol = np.zeros(cv_splits)
             gamma_val_pol = np.zeros(cv_splits)
             svm_accuracy = {}
+            svm_accuracy_tr = {}
             zeros = np.random.permutation(zeros)
             ones = np.random.permutation(ones)
             for i in range(cv_splits):
@@ -102,12 +103,22 @@ def main():
                 test = pca.transform(test_sc)
                 y_true = cat[test_index]
                 start_time = time.time()
-                (y_pred_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
-                (y_pred_pol,  c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
-                (y_pred_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, balance = 1)
+                (y_pred_rbf, y_tr_rbf,c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
+                (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
+                (y_pred_lin, y_tr_lin,c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, balance = 1)
 
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
-
+                pred_train = pd.DataFrame(
+                {'y_train': y_train,
+                 'y_tr_rbf': y_tr_rbf,
+                 'y_tr_poly': y_tr_pol,
+                 'y_tr_lin': y_tr_lin,
+                })
+                pickle.dump(pred_train, open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
+                                    np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
+                                    np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
+                print(svm_accuracy_tr[i])
 
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
