@@ -65,7 +65,7 @@ def main():
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
-    features_num = [250,500,1000]
+    features_num = [500,1000]
     for tissue in tissues:
         feat_sel = 't_test'
         open_file = os.path.realpath('../data_str/')
@@ -90,7 +90,7 @@ def main():
             zeros = np.random.permutation(nzeros)
             ones = np.random.permutation(nones)
             for i in range(cv_splits):
-                print('split: %d - num_features: %d - tissue:%s' %(i,num,tissue))
+                print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
