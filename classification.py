@@ -53,7 +53,7 @@ def SVM_classify_lin(train, y_train, test, C_range = np.logspace(-2, 10, 13)):
     c_lin = clf.best_params_['C']
     return (y_lin, c_lin)
 
-def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-3, 3, 100),gamma_range = np.logspace(-7, 1, 100), balance = 0):
+def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-10, 1, 100), balance = 0):
     #C_range = np.logspace(-2, 10, 13)
     #gamma_range = np.logspace(-9, 3, 13)
     #C_range = np.logspace(-2, 10, 6)
