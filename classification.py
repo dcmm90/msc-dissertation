@@ -75,7 +75,11 @@ def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     y_rbf = clf.predict(test)
     y_rbf_tr = clf.predict(train)
     c_rbf = clf.best_params_['C']
+    print('C')
+    print(c_rbf)
     gamma_rbf = clf.best_params_['gamma']
+    print('gamma')
+    print(gamma_rbf)
     return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf)
 
 
@@ -96,7 +100,11 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-1
     y_pol = clf.predict(test)
     y_pol_tr = clf.predict(train)
     c_pol = clf.best_params_['C']
+    print('C')
+    print(c_pol)
     gamma_pol = clf.best_params_['gamma']
+    print('gamma')
+    print(gamma_pol)
     return (y_pol, y_pol_tr, c_pol, gamma_pol)
 
 
@@ -117,4 +125,6 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-10
     y_lin = clf.predict(test)
     y_lin_tr = clf.predict(train)
     c_lin = clf.best_params_['C']
+    print('C')
+    print(c_lin)
     return (y_lin, y_lin_tr, c_lin)
