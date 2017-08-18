@@ -67,7 +67,7 @@ def main():
     #[5000,10000,50000,100000,200000,300000,400000]
     features_num = [20,50,75,100,250,500,1000]
     for tissue in tissues:
-        feat_sel = 'fisher'
+        feat_sel = 'rfe'
         open_file = os.path.realpath('../data_str/')
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
