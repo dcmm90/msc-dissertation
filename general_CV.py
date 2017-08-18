@@ -65,7 +65,7 @@ def main():
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
-    features_num = [250,500,1000]
+    features_num = [500,1000,5000,10000,100000,200000,400000]
     for tissue in tissues:
         feat_sel = 'rfe'
         open_file = os.path.realpath('../data_str/')
@@ -109,6 +109,7 @@ def main():
                 pickle.dump(features_all, open(features_file, "wb"))
 
                 train = train_full[features_all[0:num]]
+                print(train.shape)
                 test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
                 start_time = time.time()
