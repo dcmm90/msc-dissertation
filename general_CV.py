@@ -65,9 +65,9 @@ def main():
     betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
-    features_num = [250,500,1000,5000,10000,100000,200000,400000]
+    features_num = [500,1000,5000,10000,100000,200000,400000]
     for tissue in tissues:
-        feat_sel = 'fisher'
+        feat_sel = 't_test'
         open_file = os.path.realpath('../data_str/')
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]

@@ -64,7 +64,7 @@ def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=3, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('train score')
@@ -85,7 +85,7 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-1
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=3, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('train score')
@@ -106,7 +106,7 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-10
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=3, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('train score')
