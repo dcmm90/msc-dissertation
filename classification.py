@@ -112,7 +112,7 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-4
     return (y_pol, y_pol_tr, c_pol, gamma_pol)
 
 
-def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-3, 3, 100), balance = 0):
+def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5, 5, 200), balance = 0):
     print('SVM-linear')
     param_grid = [{'C': C_range, 'kernel': ['linear']}]
     svr = svm.SVC()
