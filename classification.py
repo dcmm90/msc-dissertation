@@ -3,6 +3,7 @@ from sklearn.model_selection import GridSearchCV
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegressionCV
+from sklearn.ensemble import RandomForestClassifier
 
 
 def log_reg(train, y_train, test):
@@ -133,3 +134,36 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     print(c_lin)
     #print(C_range)
     return (y_lin, y_lin_tr, c_lin)
+
+def logistic_reg(train, y_train, test, y_test):
+    print('log-reg')
+    log = LogisticRegressionCV()
+    log.fit(train, y_train)
+    tr = log.score(train, y_train)
+    print('train score')
+    print(tr)
+    ts = log.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_log = log.predict(test)
+    y_log_tr = log.predict(train)
+    return (y_log, y_log_tr)
+
+
+def random_forest(train, y_train, test, y_test):
+    print('Random Forest')
+    param_grid = {"max_features": [0.1]}
+
+    rf = RandomForestClassifier(n_estimators=500)
+    grid_search = GridSearchCV(rf, param_grid=param_grid)
+
+    rf.fit(train, y_train)
+    tr = rf.score(train, y_train)
+    print('train score')
+    print(tr)
+    ts = rf.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_rf = rf.predict(test)
+    y_rf_tr = rf.predict(train)
+    return (y_rf, y_rf_tr)

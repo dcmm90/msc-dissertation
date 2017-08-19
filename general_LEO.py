@@ -59,9 +59,9 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['CER', 'WB', 'FC', 'STG']
+    tissues=['EC','CER', 'WB', 'FC', 'STG']
     betaqn, info = load_data()
-    cv_splits = 10
+    cv_splits = 2
     features = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
                 'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
                 'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
@@ -103,9 +103,11 @@ def main():
             y_true = cat[test_index]
             start_time = time.time()
             (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
-            C_range = [0.01,0.05,0.1,0.5,1],gamma_range = [0.5,1,1.5])
-            (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true)
-            (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true)
+            C_range = np.logspace(-2, 10, 13),gamma_range = np.logspace(-9, 3, 13))
+            (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
+            C_range = np.logspace(-2, 10, 13),gamma_range = np.logspace(-9, 3, 13))
+            (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
+            C_range = np.logspace(-2, 10, 13))
             print("--- %s seconds for classification ---" % (time.time() - start_time))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,

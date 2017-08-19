@@ -12,6 +12,9 @@ import sys, os
 from os.path import join, dirname, abspath
 from pathlib import Path
 from sklearn.model_selection import StratifiedKFold
+from sklearn import preprocessing
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
 
 
 # Disable
@@ -19,25 +22,15 @@ def blockPrint():
     sys.stdout = open(os.devnull, 'w')
 
 
-def load_data():
-    beta_file = os.path.realpath('../GSE59685_betas2.csv.zip')
-    zipfile = ZipFile(beta_file)
-    zipfile.getinfo('GSE59685_betas2.csv').file_size += (2 ** 64) - 1
-    betaqn = pd.read_csv(zipfile.open('GSE59685_betas2.csv'),skiprows=(1,2), index_col=0,sep=',')
-    betaqn = betaqn.T
+def load_data(tissue):
+    #beta_file = os.path.realpath('../tissues/residuals_%s.csv.zip'%(tissue))
+    #zipfile = ZipFile(beta_file)
+    #zipfile.getinfo('residuals_%s.csv'%(tissue)).file_size += (2 ** 64) - 1
+    #betaqn = pd.read_csv(zipfile.open('residuals_%s.csv'%(tissue)),index_col=0,sep=',')
+    #betaqn = betaqn.T
+    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
+    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
 
-    info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
-    info = info.drop('Unnamed: 0', 1)
-
-    info.loc[(info.braak_stage=='5') | (info.braak_stage=='6'),'braak_bin'] = 1
-    cond = ((info.braak_stage=='0') | (info.braak_stage=='1') | (info.braak_stage=='2') |
-            (info.braak_stage=='3') | (info.braak_stage=='4'))
-    info.loc[cond ,'braak_bin'] = 0
-    info.loc[info.source_tissue == 'entorhinal cortex', 'tissue'] = 'EC'
-    info.loc[info.source_tissue == 'whole blood', 'tissue'] = 'WB'
-    info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
-    info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
-    info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
     return (betaqn, info)
 
 def get_intervals(cv_splits, i, zeros, ones):
@@ -61,21 +54,28 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
-    betaqn, info = load_data()
+    tissue='EC'
+    open_file = os.path.realpath('../data_str/')
+    ec, info = load_data(tissue)
+    features_sel = ['t_test', 'fisher', 'rfe']
+    #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
     features_num = [20,50,75,100,250,500,1000]
-    for tissue in tissues:
-        feat_sel = 't_test'
+    for feat_sel in features_sel:
+        #feat_sel = 't_test'
         open_file = os.path.realpath('../data_str/')
-        ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
+        ec, info = load_data(tissue)
+        #min_max_scaler = preprocessing.MinMaxScaler()
+        #ec = min_max_scaler.fit_transform(betas)
+        print('cargo datos')
+        #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
         nzeros = np.where(cat == 0)[0]
         nones = np.where(cat == 1)[0]
-        cv_splits = 2
+        cv_splits = 10
         div_zeros = np.ceil(len(nzeros)/cv_splits)
         div_ones = np.ceil(len(nones)/cv_splits)
 
@@ -105,6 +105,8 @@ def main():
                     features_all = fs.feature_fisher_score_parallel(train_full, info, num)
                 elif feat_sel == 'rfe':
                     features_all = fs.feature_sel_rfe(train_full, info, num)
+                #elif feat_sel == 'chi2':
+
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
 
@@ -112,12 +114,16 @@ def main():
                 print(train.shape)
                 test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
+                #SCALING
+                scale = preprocessing.StandardScaler().fit(train)
+                train = scale.transform(train)
+                test = scale.transform(test)
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,
-                C_range = np.logspace(-3,2,6),gamma_range = np.logspace(-6,2,9))
+                C_range = np.logspace(-5,2,20),gamma_range = np.logspace(-6,2,15))
                 (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true,
-                C_range = np.logspace(-3,2,6),gamma_range = np.logspace(-6,2,9))
-                (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,C_range = np.logspace(-3,2,6))
+                C_range = np.logspace(-5,2,20),gamma_range = np.logspace(-6,2,15))
+                (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,C_range = np.logspace(-5,2,20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
