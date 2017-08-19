@@ -61,7 +61,8 @@ def main():
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
-    features_num = [20,50,75,100,250,500,1000]
+    #features_num = [20,50,75,100,250,500,1000,]
+    features_num = [5000,10000,50000,100000,200000,400000]
     for feat_sel in features_sel:
         #feat_sel = 't_test'
         open_file = os.path.realpath('../data_str/')
