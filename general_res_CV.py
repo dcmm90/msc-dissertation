@@ -53,8 +53,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='STG'
-    
+    tissue='WB'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     #,'fisher',
@@ -66,9 +65,6 @@ def main():
     features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
     #features_num = [50000,100000]
     for feat_sel in features_sel:
-        if feat_sel == 't_test':
-            features_num = [100000]
-        #feat_sel = 't_test'
         ec, info = load_data(tissue)
         #min_max_scaler = preprocessing.MinMaxScaler()
         #ec = min_max_scaler.fit_transform(betas)
