@@ -53,11 +53,11 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='WB'
+    tissue='CER'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
-    #,'fisher',
-    features_sel = ['t_test','fisher','rfe']
+    #'t_test','fisher',
+    features_sel = ['rfe']
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
