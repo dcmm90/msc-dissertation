@@ -48,10 +48,10 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['CER', 'WB', 'FC', 'STG']
+    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    features_num = [20, 50, 75, 100, 250, 500, 1000]
+    features_num = [20,50,75,100,250,500,1000,5000,10000]
     for tissue in tissues:
         feat_sel = 'PCA'
         open_file = os.path.realpath('../data_str/')
@@ -76,7 +76,7 @@ def main():
             zeros = np.random.permutation(zeros)
             ones = np.random.permutation(ones)
             for i in range(cv_splits):
-                print('split: %d - num_features: %d' %(i,num))
+                print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
