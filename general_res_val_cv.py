@@ -99,7 +99,7 @@ def main():
                 samples = test_full.shape[0]
                 samples_tr = train_full.shape[0]
                 start_time = time.time()
-                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                features_file = open_file + "/features_val_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
                 elif feat_sel == 'fisher':
@@ -133,7 +133,7 @@ def main():
                  'y_tr_poly': y_tr_pol,
                  'y_tr_lin': y_tr_lin,
                 })
-                pickle.dump(pred_train, open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(pred_train, open(open_file + "/pred_val_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
@@ -144,15 +144,15 @@ def main():
                  'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(open_file + "/pred_val_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
 
                 print(svm_accuracy[i])
 
-            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
-            pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_val_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy, open(open_file + "/accuracy_val_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
              'gamma_rbf': gamma_val_rbf,
@@ -163,7 +163,7 @@ def main():
              'best_poly': best_score_pol,
              'best_lin': best_score_lin,
             })
-            pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(open_file + "/params_val_CV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
 
 
 
