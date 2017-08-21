@@ -86,7 +86,7 @@ def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-4,
     print('gamma')
     print(gamma_rbf)
     #print(gamma_range)
-    return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf)
+    return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf,bs)
 
 
 def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-5, 2, 100),gamma_range = np.logspace(-6, 4, 100), balance = 0):
@@ -99,7 +99,8 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-5
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('best score')
-    print(clf.best_score_)
+    bs = clf.best_score_
+    print(bs)
     print('train score')
     print(tr)
     ts = clf.score(test,y_test)
@@ -115,7 +116,7 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-5
     print('gamma')
     print(gamma_pol)
     #print(gamma_range)
-    return (y_pol, y_pol_tr, c_pol, gamma_pol)
+    return (y_pol, y_pol_tr, c_pol, gamma_pol,bs)
 
 
 def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5, 5, 200), balance = 0):
@@ -128,7 +129,8 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('best score')
-    print(clf.best_score_)
+    bs = clf.best_score_
+    print(bs)
     print('train score')
     print(tr)
     ts = clf.score(test,y_test)
@@ -140,7 +142,7 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     print('C')
     print(c_lin)
     #print(C_range)
-    return (y_lin, y_lin_tr, c_lin)
+    return (y_lin, y_lin_tr, c_lin,bs)
 
 def get_intervals(cv_splits, i, zeros, ones):
     div_zeros = int(np.floor(len(zeros)/cv_splits))
@@ -174,7 +176,8 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     print('validation size: %s' %len(val_index))
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
-    print(clf.best_score_)
+    bs = clf.best_score_
+    print(bs)
 
     c_rbf = clf.best_params_['C']
     print('C')
@@ -196,7 +199,7 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     y_rbf_tr = svmm.predict(train)
 
     #print(gamma_range)
-    return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf)
+    return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf,bs)
 
 
 def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logspace(-40, 1, 80),gamma_range = np.logspace(2, 5, 50), balance = 0):
@@ -211,7 +214,8 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     val_index, train_index = get_intervals(3, 0, zeros, ones)
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
-    print(clf.best_score_)
+    bs = clf.best_score_
+    print(bs)
 
     c_pol = clf.best_params_['C']
     print('C')
@@ -231,7 +235,7 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     print(ts)
     y_pol = svmm.predict(test)
     y_pol_tr = svmm.predict(train)
-    return (y_pol, y_pol_tr, c_pol, gamma_pol)
+    return (y_pol, y_pol_tr, c_pol, gamma_pol,bs)
 
 
 def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logspace(-5, 5, 200), balance = 0):
@@ -247,7 +251,8 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     clf.fit(train[val_index], y_train[val_index])
     print('validation size: %s' %len(val_index))
     print('best score')
-    print(clf.best_score_)
+    bs = clf.best_score_
+    print(bs)
     c_lin = clf.best_params_['C']
     print('C')
     print(c_lin)
@@ -264,7 +269,7 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     print('C')
     print(c_lin)
     #print(C_range)
-    return (y_lin, y_lin_tr, c_lin)
+    return (y_lin, y_lin_tr, c_lin,bs)
 
 def logistic_reg(train, y_train, test, y_test):
     print('log-reg')

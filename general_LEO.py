@@ -90,12 +90,15 @@ def main():
             gamma_val_rbf = np.zeros(cv_splits)
             c_val_lin = np.zeros(cv_splits)
             c_val_pol = np.zeros(cv_splits)
+            best_score_rbf = np.zeros(cv_splits)
+            best_score_pol = np.zeros(cv_splits)
+            best_score_lin = np.zeros(cv_splits)
             gamma_val_pol = np.zeros(cv_splits)
             svm_accuracy = {}
             zeros = np.random.permutation(nzeros)
             ones = np.random.permutation(nones)
             for i in range(cv_splits):
-                print('split: %d' %(i))
+                print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
@@ -108,11 +111,11 @@ def main():
                 y_train = info['braak_bin'].loc[train.index]
                 y_true = cat[test_index]
                 start_time = time.time()
-                (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
+                (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
                 C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-8, 2, 100))
-                (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
+                (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i],best_score_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
                 C_range = np.logspace(-5, 2, 100),gamma_range = np.logspace(-6, 4, 100))
-                (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
+                (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
                 C_range = np.logspace(-5, 2, 100))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 parameters = pd.DataFrame(
@@ -121,6 +124,9 @@ def main():
                  'C_poly': c_val_pol,
                  'gamma_poly': gamma_val_pol,
                  'C_lin': c_val_lin
+                 'best_rbf': best_score_rbf
+                 'best_poly': best_score_pol
+                 'best_lin': best_score_lin
                 })
                 pickle.dump(parameters, open(save_file + "/params_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
                 predictions = pd.DataFrame(
