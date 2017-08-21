@@ -57,6 +57,7 @@ def main():
 
     for feat_sel in features_sel:
         for tissue in tissues:
+            start_time = time.time()
             open_file = os.path.realpath('../data_str/')
             features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
             if feat_sel == 't_test':
