@@ -58,8 +58,7 @@ def main():
         ec, info = load_data(tissue)
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
-        samples = test_full.shape[0]
-        samples_tr = train_full.shape[0]
+        samples = ec.shape[0]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
         cv_splits = 10
@@ -83,6 +82,7 @@ def main():
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
+                samples_tr = train_full.shape[0]
                 #SCALING
                 scale = preprocessing.StandardScaler().fit(train_full)
                 train_sc = scale.transform(train_full)
