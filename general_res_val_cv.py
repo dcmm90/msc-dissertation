@@ -158,10 +158,10 @@ def main():
              'gamma_rbf': gamma_val_rbf,
              'C_poly': c_val_pol,
              'gamma_poly': gamma_val_pol,
-             'C_lin': c_val_lin
-             'best_rbf': best_score_rbf
-             'best_poly': best_score_pol
-             'best_lin': best_score_lin
+             'C_lin': c_val_lin,
+             'best_rbf': best_score_rbf,
+             'best_poly': best_score_pol,
+             'best_lin': best_score_lin,
             })
             pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
 
