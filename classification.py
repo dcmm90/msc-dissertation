@@ -243,6 +243,7 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(4, 0, zeros, ones)
     print('validation size: %s' %len(val_index))
+    clf.fit(train[val_index], y_train[val_index])
     print('best score')
     bs = clf.best_score_
     print(bs)
