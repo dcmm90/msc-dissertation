@@ -113,8 +113,8 @@ def main():
 
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
-                 #'y_rbf': y_pred_rbf,
-                 'y_poly': y_pred_pol,
+                 'y_rbf': y_pred_rbf,
+                 #'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
                 pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
