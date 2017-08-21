@@ -149,6 +149,7 @@ def main():
                 svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
+                print(svm_accuracy[i])
                 print(svm_accuracy_tr[i])
             pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO_%s_%s.p" % (tissue,feat_sel), "wb"))
             pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO_tr_%s_%s.p" % (tissue,feat_sel), "wb"))
