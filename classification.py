@@ -141,6 +141,93 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     #print(C_range)
     return (y_lin, y_lin_tr, c_lin)
 
+def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-10, 1, 100), balance = 0):
+    #C_range = np.logspace(-2, 10, 13)
+    #gamma_range = np.logspace(-9, 3, 13)
+    #C_range = np.logspace(-2, 10, 6)
+    #gamma_range = np.logspace(-6, 3, 8)
+    #rbf
+    print('SVM-rbf')
+    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['rbf']}]
+    svr = svm.SVC()
+    if balance == 1:
+        svr = svm.SVC(class_weight ='balanced')
+    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf.fit(train, y_train)
+    tr = clf.score(train, y_train)
+    print('best score')
+    print(clf.best_score_)
+    print('train score')
+    print(tr)
+    ts = clf.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_rbf = clf.predict(test)
+    y_rbf_tr = clf.predict(train)
+    c_rbf = clf.best_params_['C']
+    print('C')
+    print(c_rbf)
+    #print(C_range)
+    gamma_rbf = clf.best_params_['gamma']
+    print('gamma')
+    print(gamma_rbf)
+    #print(gamma_range)
+    return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf)
+
+
+def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logspace(-40, 1, 80),gamma_range = np.logspace(2, 5, 50), balance = 0):
+    print('SVM-polynomial')
+    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly'],'degree': [2,3,4]}]
+    svr = svm.SVC()
+    if balance == 1:
+        svr = svm.SVC(class_weight ='balanced')
+    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf.fit(train, y_train)
+    tr = clf.score(train, y_train)
+    print('best score')
+    print(clf.best_score_)
+    print('train score')
+    print(tr)
+    ts = clf.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_pol = clf.predict(test)
+    y_pol_tr = clf.predict(train)
+    c_pol = clf.best_params_['C']
+    print('C')
+    print(c_pol)
+    #print(C_range)
+    gamma_pol = clf.best_params_['gamma']
+    print('gamma')
+    print(gamma_pol)
+    #print(gamma_range)
+    return (y_pol, y_pol_tr, c_pol, gamma_pol)
+
+
+def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logspace(-5, 5, 200), balance = 0):
+    print('SVM-linear')
+    param_grid = [{'C': C_range, 'kernel': ['linear']}]
+    svr = svm.SVC()
+    if balance == 1:
+        svr = svm.SVC(class_weight ='balanced')
+    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf.fit(train, y_train)
+    tr = clf.score(train, y_train)
+    print('best score')
+    print(clf.best_score_)
+    print('train score')
+    print(tr)
+    ts = clf.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_lin = clf.predict(test)
+    y_lin_tr = clf.predict(train)
+    c_lin = clf.best_params_['C']
+    print('C')
+    print(c_lin)
+    #print(C_range)
+    return (y_lin, y_lin_tr, c_lin)
+
 def logistic_reg(train, y_train, test, y_test):
     print('log-reg')
     log = LogisticRegressionCV()
