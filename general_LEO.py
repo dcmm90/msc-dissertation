@@ -103,8 +103,8 @@ def main():
                 samples = test_full.shape[0]
                 samples_tr = train_full.shape[0]
 
-                train = train_full[features]
-                test = test_full[features]
+                train = train_full[features_all]
+                test = test_full[features_all]
                 y_train = info['braak_bin'].loc[train.index]
                 y_true = cat[test_index]
                 start_time = time.time()
