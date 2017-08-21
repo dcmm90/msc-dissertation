@@ -165,7 +165,7 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
-    val_index, train_index = get_intervals(3, 0, zeros, ones)
+    val_index, train_index = get_intervals(4, 0, zeros, ones)
     print('validation size: %s' %len(val_index))
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
@@ -204,7 +204,8 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
-    val_index, train_index = get_intervals(3, 0, zeros, ones)
+    val_index, train_index = get_intervals(4, 0, zeros, ones)
+    print('validation size: %s' %len(val_index))
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
     bs = clf.best_score_
@@ -240,8 +241,7 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
-    val_index, train_index = get_intervals(3, 0, zeros, ones)
-    clf.fit(train[val_index], y_train[val_index])
+    val_index, train_index = get_intervals(4, 0, zeros, ones)
     print('validation size: %s' %len(val_index))
     print('best score')
     bs = clf.best_score_
