@@ -54,7 +54,9 @@ def main():
     cv_splits = 10
     features_sel = ['t_test','fisher','rfe','leo']
     num = 15
-    for feat_sel in features_sel
+
+    for feat_sel in features_sel:
+        features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
         if feat_sel == 't_test':
             features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
         elif feat_sel == 'fisher':
@@ -65,6 +67,8 @@ def main():
             features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
                     'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
                     'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
+        print("--- %s seconds for feature selection ---" % (time.time() - start_time))
+        pickle.dump(features_all, open(features_file, "wb"))
         for tissue in tissues:
             save_file = os.path.realpath('../data_str/')
             betaqn, info = load_data(tissue)
@@ -116,23 +120,21 @@ def main():
                  'gamma_poly': gamma_val_pol,
                  'C_lin': c_val_lin
                 })
-                pickle.dump(parameters, open(save_file + "/params_LEO_%s_%d.p" %(tissue,i), "wb"))
+                pickle.dump(parameters, open(save_file + "/params_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
                  'y_rbf': y_pred_rbf,
                  'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(save_file + "/pred_LEO_%s_%d.p" %(tissue,i), "wb"))
+                pickle.dump(predictions, open(save_file + "/pred_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
                  'y_tr_rbf': y_tr_rbf,
                  'y_tr_poly': y_tr_pol,
                  'y_tr_lin': y_tr_lin,
                 })
-                pickle.dump(pred_train, open(save_file + "/pred_LEO_tr_%s_%d.p" %(tissue, i), "wb"))
-                #pickle.dump(features_sel, open(save_file + "/feat_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
-                #features_sel_total = {key: value + [features_sel[key]] for key, value in features_sel_total.items()}
+                pickle.dump(pred_train, open(save_file + "/pred_LEO_tr_%s_%s_%d.p" %(tissue,feat_sel, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
@@ -140,8 +142,8 @@ def main():
                                     np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
                 print(svm_accuracy_tr[i])
-            pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO_%s.p" % (tissue), "wb"))
-            pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO_tr_%s.p" % (tissue), "wb"))
+            pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO_%s_%s.p" % (tissue,feat_sel), "wb"))
+            pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO_tr_%s_%s.p" % (tissue,feat_sel), "wb"))
 
 
 
