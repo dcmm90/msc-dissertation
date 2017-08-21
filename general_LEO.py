@@ -52,7 +52,7 @@ def main():
     tissues=['EC','CER', 'WB', 'FC', 'STG']
 
     cv_splits = 10
-    features_sel = ['t_test','fisher','rfe','leo']
+    features_sel = ['leo','t_test','fisher','rfe']
     num = 15
 
     for feat_sel in features_sel:
