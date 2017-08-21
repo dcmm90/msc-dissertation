@@ -5,14 +5,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.ensemble import RandomForestClassifier
 
-
-def log_reg(train, y_train, test):
-    lr = LogisticRegressionCV(Cs=10, cv=5, dual=False, solver = 'sag', tol=0.001, max_iter=1000, n_jobs=-1, verbose=1, random_state=1234)
-    lr.fit(train, y_train)
-    y_lr = lr.predict(test)[0]
-    return (y_lr)
-
-
+CV_numbers = 3
 
 def SVM_classify_rbf(train, y_train, test,C_range = np.logspace(-2, 10, 13),gamma_range = np.logspace(-9, 3, 13)):
     #C_range = np.logspace(-2, 10, 13)
@@ -65,7 +58,7 @@ def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-4,
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('best score')
@@ -95,7 +88,7 @@ def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-5
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('best score')
@@ -125,7 +118,7 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     clf.fit(train, y_train)
     tr = clf.score(train, y_train)
     print('best score')
@@ -169,7 +162,7 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=3, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(3, 0, zeros, ones)
@@ -208,7 +201,7 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(3, 0, zeros, ones)
@@ -244,7 +237,7 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
+    clf = GridSearchCV(svr, param_grid, cv=CV_numbers, verbose=1, n_jobs = -1)
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(3, 0, zeros, ones)
