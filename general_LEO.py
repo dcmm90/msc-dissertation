@@ -49,28 +49,28 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC','CER', 'WB', 'FC', 'STG']
+    tissues=['EC','CER','WB','FC','STG']
 
     cv_splits = 10
     features_sel = ['leo','t_test','fisher','rfe']
     num = 15
 
     for feat_sel in features_sel:
-        open_file = os.path.realpath('../data_str/')
-        features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
-        if feat_sel == 't_test':
-            features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
-        elif feat_sel == 'fisher':
-            features_all = fs.feature_fisher_score_parallel(train_full, info, num)
-        elif feat_sel == 'rfe':
-            features_all = fs.feature_sel_rfe(train_full, info, num)
-        elif feat_sel == 'leo':
-            features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
-                    'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
-                    'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
-        print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-        pickle.dump(features_all, open(features_file, "wb"))
         for tissue in tissues:
+            open_file = os.path.realpath('../data_str/')
+            features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
+            if feat_sel == 't_test':
+                features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
+            elif feat_sel == 'fisher':
+                features_all = fs.feature_fisher_score_parallel(train_full, info, num)
+            elif feat_sel == 'rfe':
+                features_all = fs.feature_sel_rfe(train_full, info, num)
+            elif feat_sel == 'leo':
+                features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
+                        'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
+                        'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
+            print("--- %s seconds for feature selection ---" % (time.time() - start_time))
+            pickle.dump(features_all, open(features_file, "wb"))
             save_file = os.path.realpath('../data_str/')
             betaqn, info = load_data(tissue)
             ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
