@@ -56,6 +56,7 @@ def main():
     num = 15
 
     for feat_sel in features_sel:
+        open_file = os.path.realpath('../data_str/')
         features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
         if feat_sel == 't_test':
             features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
