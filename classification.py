@@ -141,29 +141,39 @@ def SVM_classify_lin_all(train, y_train, test, y_test, C_range = np.logspace(-5,
     #print(C_range)
     return (y_lin, y_lin_tr, c_lin)
 
+def get_intervals(cv_splits, i, zeros, ones):
+    div_zeros = int(np.floor(len(zeros)/cv_splits))
+    div_ones = int(np.floor(len(ones)/cv_splits))
+    if (i<(cv_splits-1)):
+        mini_zero = div_zeros*i
+        maxi_zero = (div_zeros*i) + div_zeros
+        mini_one = div_ones*i
+        maxi_one = (div_ones*i) + div_ones
+    else:
+        mini_zero = div_zeros*i
+        maxi_zero = len(zeros)
+        mini_one = div_ones*i
+        maxi_one = len(ones)
+    index_zeros = list(zeros[mini_zero: maxi_zero])
+    index_ones = list(ones[mini_one: maxi_one])
+    test = np.array(index_zeros + index_ones )
+    train = np.array(list(set(list(ones)+list(zeros)) - set(test)))
+    return test,train
+
 def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-10, 1, 100), balance = 0):
-    #C_range = np.logspace(-2, 10, 13)
-    #gamma_range = np.logspace(-9, 3, 13)
-    #C_range = np.logspace(-2, 10, 6)
-    #gamma_range = np.logspace(-6, 3, 8)
-    #rbf
     print('SVM-rbf')
     param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['rbf']}]
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
-    clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
-    clf.fit(train, y_train)
-    tr = clf.score(train, y_train)
+    clf = GridSearchCV(svr, param_grid, cv=3, verbose=1, n_jobs = -1)
+    zeros = np.where(y_train == 0)[0]
+    ones = np.where(y_train == 1)[0]
+    val_index, train_index = get_intervals(3, 0, zeros, ones)
+    clf.fit(train[val_index], y_train[val_index])
     print('best score')
     print(clf.best_score_)
-    print('train score')
-    print(tr)
-    ts = clf.score(test,y_test)
-    print('test score')
-    print(ts)
-    y_rbf = clf.predict(test)
-    y_rbf_tr = clf.predict(train)
+
     c_rbf = clf.best_params_['C']
     print('C')
     print(c_rbf)
@@ -171,6 +181,18 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     gamma_rbf = clf.best_params_['gamma']
     print('gamma')
     print(gamma_rbf)
+    svmm = svm.SVC(C=c_rbf, kernel='rbf', gamma=gamma_rbf)
+    svmm.fit(train, y_train)
+
+    tr = svmm.score(train, y_train)
+    print('train score')
+    print(tr)
+    ts = svmm.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_rbf = svmm.predict(test)
+    y_rbf_tr = svmm.predict(train)
+
     #print(gamma_range)
     return (y_rbf,y_rbf_tr,c_rbf, gamma_rbf)
 
@@ -182,10 +204,15 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
-    clf.fit(train, y_train)
-    tr = clf.score(train, y_train)
+    zeros = np.where(y_train == 0)[0]
+    ones = np.where(y_train == 1)[0]
+    val_index, train_index = get_intervals(3, 0, zeros, ones)
+    clf.fit(train[val_index], y_train[val_index])
     print('best score')
     print(clf.best_score_)
+    print('best score')
+    print(clf.best_score_)
+    tr = clf.score(train, y_train)
     print('train score')
     print(tr)
     ts = clf.score(test,y_test)
@@ -211,18 +238,25 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
     clf = GridSearchCV(svr, param_grid, cv=5, verbose=1, n_jobs = -1)
-    clf.fit(train, y_train)
-    tr = clf.score(train, y_train)
+    zeros = np.where(y_train == 0)[0]
+    ones = np.where(y_train == 1)[0]
+    val_index, train_index = get_intervals(3, 0, zeros, ones)
+    clf.fit(train[val_index], y_train[val_index])
     print('best score')
     print(clf.best_score_)
+    c_lin = clf.best_params_['C']
+    print('C')
+    print(c_lin)
+    svmm = svm.SVC(C=c_lin, kernel='linear')
+    svmm.fit(train, y_train)
+    tr = svmm.score(train, y_train)
     print('train score')
     print(tr)
-    ts = clf.score(test,y_test)
+    ts = svmm.score(test,y_test)
     print('test score')
     print(ts)
-    y_lin = clf.predict(test)
-    y_lin_tr = clf.predict(train)
-    c_lin = clf.best_params_['C']
+    y_lin = svmm.predict(test)
+    y_lin_tr = svmm.predict(train)
     print('C')
     print(c_lin)
     #print(C_range)

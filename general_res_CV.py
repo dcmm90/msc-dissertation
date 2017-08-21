@@ -76,8 +76,6 @@ def main():
         nzeros = np.where(cat == 0)[0]
         nones = np.where(cat == 1)[0]
         cv_splits = 10
-        div_zeros = np.ceil(len(nzeros)/cv_splits)
-        div_ones = np.ceil(len(nones)/cv_splits)
 
         for num in features_num:
             c_val_rbf = np.zeros(cv_splits)
@@ -92,6 +90,7 @@ def main():
             for i in range(cv_splits):
                 print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
+                print(test_index)
                 train_full = ec.iloc[train_index]
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
@@ -148,6 +147,7 @@ def main():
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
 
                 print(svm_accuracy[i])
+
             pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
@@ -158,7 +158,7 @@ def main():
              'C_lin': c_val_lin
             })
             pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
-
+'''
 
 
 

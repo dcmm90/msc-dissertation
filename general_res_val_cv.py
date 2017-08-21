@@ -10,10 +10,15 @@ import os.path
 from zipfile import ZipFile
 import sys, os
 from os.path import join, dirname, abspath
-from pathlib import Path
 from sklearn.model_selection import StratifiedKFold
-from sklearn.decomposition import PCA
 from sklearn import preprocessing
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+
+
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
 
 
 def load_data(tissue):
@@ -48,22 +53,29 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC', 'CER', 'WB', 'FC', 'STG']
+    tissue='FC'
+    open_file = os.path.realpath('../data_str/')
+    ec, info = load_data(tissue)
+    #'t_test','fisher',
+    features_sel = ['t_test','fisher','rfe']
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    features_num = [50,75,100,250,500,1000,5000,10000]
-    for tissue in tissues:
-        feat_sel = 'PCA'
-        open_file = os.path.realpath('../data_str/')
+    #[5000,10000,50000,100000,200000,300000,400000]
+    #features_num = [20,50,75,100,250,500,1000,]
+    #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
+    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    for feat_sel in features_sel:
         ec, info = load_data(tissue)
+        #min_max_scaler = preprocessing.MinMaxScaler()
+        #ec = min_max_scaler.fit_transform(betas)
+        print('cargo datos')
+        #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
-        zeros = np.where(cat == 0)[0]
-        ones = np.where(cat == 1)[0]
+        nzeros = np.where(cat == 0)[0]
+        nones = np.where(cat == 1)[0]
         cv_splits = 10
-        div_zeros = np.ceil(len(zeros)/cv_splits)
-        div_ones = np.ceil(len(ones)/cv_splits)
 
         for num in features_num:
             c_val_rbf = np.zeros(cv_splits)
@@ -73,8 +85,8 @@ def main():
             gamma_val_pol = np.zeros(cv_splits)
             svm_accuracy = {}
             svm_accuracy_tr = {}
-            zeros = np.random.permutation(zeros)
-            ones = np.random.permutation(ones)
+            zeros = np.random.permutation(nzeros)
+            ones = np.random.permutation(nones)
             for i in range(cv_splits):
                 print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
@@ -82,21 +94,34 @@ def main():
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
-                #SCALING
-                scale = preprocessing.StandardScaler().fit(train_full)
-                train_sc = scale.transform(train_full)
-                test_sc = scale.transform(test_full)
-                #PCA
-                pca = PCA(n_components=num)
-                pca.fit(train_sc)
-                train = pca.transform(train_sc)
-                test = pca.transform(test_sc)
-                y_true = cat[test_index]
+                samples_tr = train_full.shape[0]
                 start_time = time.time()
-                (y_pred_rbf, y_tr_rbf,c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train, test, y_true,balance = 1)
-                #(y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true, balance = 1)
-                (y_pred_lin, y_tr_lin,c_val_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true, balance = 1)
+                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                if feat_sel == 't_test':
+                    features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
+                elif feat_sel == 'fisher':
+                    features_all = fs.feature_fisher_score_parallel(train_full, info, num)
+                elif feat_sel == 'rfe':
+                    features_all = fs.feature_sel_rfe(train_full, info, num)
+                #elif feat_sel == 'chi2':
 
+                print("--- %s seconds for feature selection ---" % (time.time() - start_time))
+                pickle.dump(features_all, open(features_file, "wb"))
+
+                train = train_full[features_all[0:num]]
+                print(train.shape)
+                test = test_full[features_all[0:num]]
+                y_true = cat[test_index]
+                #SCALING
+                scale = preprocessing.StandardScaler().fit(train)
+                train = scale.transform(train)
+                test = scale.transform(test)
+                start_time = time.time()
+                (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i]) = cl.SVM_classify_rbf_validation(train, y_train, test, y_true,
+                C_range = np.logspace(-5,2,20),gamma_range = np.logspace(-6,2,15))
+                #(y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test,y_true,
+                #C_range = np.logspace(-5,2,20),gamma_range = np.logspace(-6,2,15))
+                (y_pred_lin, y_tr_lin, c_val_lin[i]) = cl.SVM_classify_lin_validation(train, y_train, test, y_true,C_range = np.logspace(-5,2,20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
@@ -109,18 +134,20 @@ def main():
                                     #np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
                 print(svm_accuracy_tr[i])
-
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
-                 #'y_rbf': y_pred_rbf,
-                 'y_poly': y_pred_pol,
+                 'y_rbf': y_pred_rbf,
+                 #'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
                 pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     #np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
+
                 print(svm_accuracy[i])
+
+            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
