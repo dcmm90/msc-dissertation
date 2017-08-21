@@ -84,7 +84,7 @@ def SVM_classify_rbf_all(train, y_train, test, y_test, C_range = np.logspace(-4,
 
 def SVM_classify_poly_all(train, y_train, test, y_test, C_range = np.logspace(-5, 2, 100),gamma_range = np.logspace(-6, 4, 100), balance = 0):
     print('SVM-polynomial')
-    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly'],'degree': [2,3,4]}]
+    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly'],'degree': [3,4]}]
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
@@ -197,7 +197,7 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
 
 def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logspace(-40, 1, 80),gamma_range = np.logspace(2, 5, 50), balance = 0):
     print('SVM-polynomial')
-    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly'],'degree': [2,3,4]}]
+    param_grid = [{'C': C_range, 'gamma': gamma_range, 'kernel': ['poly'],'degree': [3,4]}]
     svr = svm.SVC()
     if balance == 1:
         svr = svm.SVC(class_weight ='balanced')
