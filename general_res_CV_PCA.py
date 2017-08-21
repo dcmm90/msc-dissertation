@@ -58,7 +58,8 @@ def main():
         ec, info = load_data(tissue)
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
-        samples = ec.shape[0]
+        samples = test_full.shape[0]
+        samples_tr = train_full.shape[0]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
         cv_splits = 10

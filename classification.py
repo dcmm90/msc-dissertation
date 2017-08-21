@@ -170,6 +170,7 @@ def SVM_classify_rbf_validation(train, y_train, test, y_test, C_range = np.logsp
     zeros = np.where(y_train == 0)[0]
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(3, 0, zeros, ones)
+    print('validation size: %s' %len(val_index))
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
     print(clf.best_score_)
@@ -210,16 +211,7 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     clf.fit(train[val_index], y_train[val_index])
     print('best score')
     print(clf.best_score_)
-    print('best score')
-    print(clf.best_score_)
-    tr = clf.score(train, y_train)
-    print('train score')
-    print(tr)
-    ts = clf.score(test,y_test)
-    print('test score')
-    print(ts)
-    y_pol = clf.predict(test)
-    y_pol_tr = clf.predict(train)
+
     c_pol = clf.best_params_['C']
     print('C')
     print(c_pol)
@@ -227,7 +219,17 @@ def SVM_classify_poly_validation(train, y_train, test, y_test, C_range = np.logs
     gamma_pol = clf.best_params_['gamma']
     print('gamma')
     print(gamma_pol)
-    #print(gamma_range)
+    svmm = svm.SVC(C=c_pol, kernel='poly', gamma=gamma_pol)
+    svmm.fit(train, y_train)
+
+    tr = svmm.score(train, y_train)
+    print('train score')
+    print(tr)
+    ts = svmm.score(test,y_test)
+    print('test score')
+    print(ts)
+    y_pol = svmm.predict(test)
+    y_pol_tr = svmm.predict(train)
     return (y_pol, y_pol_tr, c_pol, gamma_pol)
 
 
@@ -242,6 +244,7 @@ def SVM_classify_lin_validation(train, y_train, test, y_test, C_range = np.logsp
     ones = np.where(y_train == 1)[0]
     val_index, train_index = get_intervals(3, 0, zeros, ones)
     clf.fit(train[val_index], y_train[val_index])
+    print('validation size: %s' %len(val_index))
     print('best score')
     print(clf.best_score_)
     c_lin = clf.best_params_['C']
