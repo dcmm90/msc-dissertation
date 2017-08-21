@@ -74,7 +74,7 @@ def main():
             pickle.dump(features_all, open(features_file, "wb"))
             save_file = os.path.realpath('../data_str/')
             betaqn, info = load_data(tissue)
-            ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
+            ec = betaqn
             cat = info['braak_bin'].loc[ec.index]
             svm_accuracy = {}
             samples = ec.shape[0]
