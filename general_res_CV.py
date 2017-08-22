@@ -56,14 +56,16 @@ def main():
     tissue='EC'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
-    #'t_test','fisher',
-    features_sel = ['t_test','fisher','rfe']
+    #'t_test','fisher','rfe'
+    features_sel = ['t_test']
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     #[5000,10000,50000,100000,200000,300000,400000]
     #features_num = [20,50,75,100,250,500,1000,]
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    #features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    features_num = [5,10,15,20,50]
+    #features_num = [10]
     for feat_sel in features_sel:
         ec, info = load_data(tissue)
         #min_max_scaler = preprocessing.MinMaxScaler()
@@ -101,6 +103,7 @@ def main():
                 samples_tr = train_full.shape[0]
                 start_time = time.time()
                 features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                print(train_full.shape)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
                 elif feat_sel == 'fisher':
@@ -116,10 +119,12 @@ def main():
                 print(train.shape)
                 test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
+
                 #SCALING
-                scale = preprocessing.StandardScaler().fit(train)
-                train = scale.transform(train)
-                test = scale.transform(test)
+                #scale = preprocessing.StandardScaler().fit(train)
+                #train = scale.transform(train)
+                #test = scale.transform(test)
+
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
                 C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-8, 2, 100))
