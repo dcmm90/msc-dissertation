@@ -53,23 +53,20 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='FC'
+    tissue='EC'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     #'t_test','fisher','rfe'
-    features_sel = ['t_test','fisher','rfe']
+    features_sel = ['t_test','fisher','rfe', 'PCA']
     #betaqn, info = load_data()
-    #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    #[5000,10000,50000,100000,200000,300000,400000]
-    #features_num = [20,50,75,100,250,500,1000,]
-    #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     #features_num = [5,10,15,20,50]
     #features_num = [10]
     for feat_sel in features_sel:
-        ec, info = load_data(tissue)
-        #min_max_scaler = preprocessing.MinMaxScaler()
-        #ec = min_max_scaler.fit_transform(betas)
+        beta, info = load_data(tissue)
+        vari = beta.var()
+        ind = np.argsort(vari)[-100000:]
+        ec = beta.iloc[:,ind]
         print('cargo datos')
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
@@ -115,21 +112,27 @@ def main():
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
 
-                train = train_full[features_all[0:num]]
-                print(train.shape)
-                test = test_full[features_all[0:num]]
+                if feat_sel == 'PCA':
+                    #SCALING
+                    scale = preprocessing.StandardScaler().fit(train_full)
+                    train_sc = scale.transform(train_full)
+                    test_sc = scale.transform(test_full)
+                    #PCA
+                    pca = PCA(n_components=num)
+                    pca.fit(train_sc)
+                    train = pca.transform(train_sc)
+                    test = pca.transform(test_sc)
+                else:
+                    train = train_full[features_all[0:num]]
+                    print(train.shape)
+                    test = test_full[features_all[0:num]]
+
                 y_true = cat[test_index]
-
-                #SCALING
-                #scale = preprocessing.StandardScaler().fit(train)
-                #train = scale.transform(train)
-                #test = scale.transform(test)
-
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
                 C_range = np.logspace(-6, 4, 100),gamma_range = np.logspace(-8, 2, 100))
                 (y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i],best_score_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
-                C_range = np.logspace(-4, 2, 50),gamma_range = np.logspace(-6, 4, 50))
+                C_range = np.logspace(-5, 2, 50),gamma_range = np.logspace(-6, 4, 50))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
                 C_range = np.logspace(-6, 2, 100))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))

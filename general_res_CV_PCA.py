@@ -48,10 +48,10 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC']
+    tissues=['EC', 'CER','FC','STG','WB']
     #betaqn, info = load_data()
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     for tissue in tissues:
         feat_sel = 'PCA'
         open_file = os.path.realpath('../data_str/')
