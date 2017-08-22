@@ -29,7 +29,18 @@ def load_data(tissue):
     WB_data = pickle.load( open( 'tissues/resi_norm_WB.p', "rb" ) )
     frames = [EC_data,FC_data,STG_data,CER_data,WB_data]
     betaqn = pd.concat(frames)
-    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
+    info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
+    info = info.drop('Unnamed: 0', 1)
+
+    info.loc[(info.braak_stage=='5') | (info.braak_stage=='6'),'braak_bin'] = 1
+    cond = ((info.braak_stage=='0') | (info.braak_stage=='1') | (info.braak_stage=='2') |
+            (info.braak_stage=='3') | (info.braak_stage=='4'))
+    info.loc[cond ,'braak_bin'] = 0
+    info.loc[info.source_tissue == 'entorhinal cortex', 'tissue'] = 'EC'
+    info.loc[info.source_tissue == 'whole blood', 'tissue'] = 'WB'
+    info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
+    info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
+    info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
 
     return (betaqn, info)
 
