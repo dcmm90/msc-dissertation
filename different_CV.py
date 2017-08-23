@@ -119,12 +119,12 @@ def main():
                  'y_rbf': y_pred_rbf,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(open_file + "/pred_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(open_file + "/pred_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
 
                 print(svm_accuracy[i])
-            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_diffCV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
             pickle.dump(svm_accuracy, open(open_file + "/accuracy_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
@@ -133,7 +133,7 @@ def main():
              'best_rbf': best_score_rbf,
              'best_lin': best_score_lin,
             })
-            pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, cv), "wb"))
 
 
 
