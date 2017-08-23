@@ -107,8 +107,8 @@ def main():
                 train_blood = blood.iloc[train_index]
                 y_train = cat[train_index]
                 test_blood = blood.iloc[test_index]
-                samples = test_full.shape[0]
-                samples_tr = train_full.shape[0]
+                samples = test_blood.shape[0]
+                samples_tr = train_blood.shape[0]
                 #get the index of the samples in the test set- we dont want to train with those subjects
                 rem = test_blood.index
                 unwanted = list(info['subject'].loc[rem])
@@ -120,7 +120,7 @@ def main():
 
                 start_time = time.time()
                 features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
-                print(train_full.shape)
+                print(ec_train.shape)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(ec_train, info, num)
                 elif feat_sel == 'fisher':
