@@ -14,6 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 
 # Disable
@@ -72,7 +74,7 @@ def main():
     blood = pickle.load( open( '../tissues/resi_norm_WB.p', "rb" ) )
     print('cargo datos')
     #'t_test','fisher','rfe'
-    features_sel = ['t_test','fisher','rfe', 'PCA']
+    features_sel = ['PCA']
 
     features_num = [5,10,15,20,50,75,100,250,500]
     #features_num = [5,10,15,20,50]
