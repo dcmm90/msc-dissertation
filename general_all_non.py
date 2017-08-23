@@ -136,7 +136,7 @@ def main():
                 print('gen_all -split: %d - num_features: %d - feat_sel:%s' %(i,num,feat_sel))
                 test_index, train_index = get_intervals_all(cv_splits, i, zeros, ones, new_inf, subjects, categories)
                 print('tamaño de test: %s'%len(test_index))
-                print(new_inf['subject'].loc[test_index])
+                print(np.array(new_inf['subject'].loc[test_index]))
                 train_full = ec.loc[train_index]
                 y_train = cat[train_index]
                 test_full = ec.loc[test_index]
