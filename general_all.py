@@ -14,6 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 
 # Disable
@@ -73,7 +75,7 @@ def main():
     features_sel = ['t_test','fisher','rfe','PCA']
     #features_num = [20,50,75,100,250,500,1000,]
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
+    features_num = [5,10,15,20,50,75,100,250,500,1000]
     #features_num = [5,10,15,20,50]
     #features_num = [10]
     for feat_sel in features_sel:
@@ -84,7 +86,7 @@ def main():
         samples = ec.shape[0]
         nzeros = np.where(cat == 0)[0]
         nones = np.where(cat == 1)[0]
-        cv_splits = 10
+        cv_splits = 5
 
         for num in features_num:
             c_val_rbf = np.zeros(cv_splits)
@@ -137,9 +139,9 @@ def main():
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-3, 5, 30),gamma_range = np.logspace(-6, 3, 20))
+                C_range = np.logspace(-3, 5, 10),gamma_range = np.logspace(-6, 3, 10))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-3, 5, 50))
+                C_range = np.logspace(-3, 5, 10))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
