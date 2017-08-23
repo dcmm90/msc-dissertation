@@ -56,7 +56,7 @@ def main():
     features_sel = ['t_test','fisher','rfe']
     for feat_sel in features_sel:
         open_file = os.path.realpath('../data_str/')
-        ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
+        ec = betaqn
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
