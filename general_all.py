@@ -77,9 +77,6 @@ def main():
     #features_num = [5,10,15,20,50]
     #features_num = [10]
     for feat_sel in features_sel:
-        ec, info = load_data(tissue)
-        #min_max_scaler = preprocessing.MinMaxScaler()
-        #ec = min_max_scaler.fit_transform(betas)
         print('cargo datos')
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
