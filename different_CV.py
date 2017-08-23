@@ -109,7 +109,7 @@ def main():
                  'y_tr_rbf': y_tr_rbf,
                  'y_tr_lin': y_tr_lin,
                 })
-                pickle.dump(predictions, open(open_file + "/pred_tr_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
+                pickle.dump(pred_train, open(open_file + "/pred_tr_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
                 svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
                 print(svm_accuracy_tr[i])
