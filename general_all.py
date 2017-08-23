@@ -68,6 +68,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 def main():
     open_file = os.path.realpath('../data_str/')
+    tissue = 'all'
     ec, info = load_data()
     #'t_test','fisher','rfe'
     features_sel = ['t_test','fisher','rfe','PCA']
@@ -97,7 +98,7 @@ def main():
             zeros = np.random.permutation(nzeros)
             ones = np.random.permutation(nones)
             for i in range(cv_splits):
-                print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
+                print('gen_all -split: %d - num_features: %d - feat_sel:%s' %(i,num,feat_sel))
                 test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
                 print('tamaño de test: %s'%len(test_index))
                 train_full = ec.iloc[train_index]
