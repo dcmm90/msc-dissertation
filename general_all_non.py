@@ -65,10 +65,46 @@ def get_intervals(cv_splits, i, zeros, ones):
     train = np.array(list(set(list(ones)+list(zeros)) - set(test)))
     return test,train
 
+def get_intervals_all(cv_splits, i, zeros, ones, new_inf, subjects, categories):
+    div_zeros = int(np.floor(len(zeros)/cv_splits))
+    div_ones = int(np.floor(len(ones)/cv_splits))
+    if (i<(cv_splits-1)):
+        mini_zero = div_zeros*i
+        maxi_zero = (div_zeros*i) + div_zeros
+        mini_one = div_ones*i
+        maxi_one = (div_ones*i) + div_ones
+    else:
+        mini_zero = div_zeros*i
+        maxi_zero = len(zeros)
+        mini_one = div_ones*i
+        maxi_one = len(ones)
+    index_zeros_temp = list(zeros[mini_zero: maxi_zero])
+    index_ones_temp = list(ones[mini_one: maxi_one])
+    index_zeros = []
+    index_ones = []
+    for i in range(len(new_inf.index)):
+        ids = new_inf.index[i]
+        if new_inf['subject'].loc[ids] in subjects[index_zeros_temp]:
+            index_zeros.append(i)
+        elif new_inf['subject'].loc[ids] in subjects[index_ones_temp]:
+            index_ones.append(i)
+    index_test = np.array(index_zeros + index_ones)
+    index_train = np.array(list(set(range(len(new_inf))) - set(index_test)))
+    id_test = new_inf.iloc[index_test].index
+    id_train = new_inf.iloc[index_train].index
+    return id_test,id_train
+
+
 def main():
     open_file = os.path.realpath('../data_str/')
     tissue = 'all'
     ec, info = load_data()
+    ec_temp = ec.loc[info.braak_stage != 'Exclude']
+    new_inf = info.loc[ec_temp.index]
+    subjects = np.unique(new_inf.subject)
+    fromtis = ec.loc[(info.tissue == 'STG') &(info.braak_stage != 'Exclude')]
+    categories = new_inf['braak_bin'].loc[fromtis.index]
+    print('cargo datos')
     #'t_test','fisher','rfe'
     features_sel = ['t_test','fisher','rfe','PCA']
     #features_num = [20,50,75,100,250,500,1000,]
@@ -76,14 +112,14 @@ def main():
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     #features_num = [5,10,15,20,50]
     #features_num = [10]
+    nzeros = np.where(categories == 0)[0]
+    nones = np.where(categories == 1)[0]
     for feat_sel in features_sel:
-        print('cargo datos')
+
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
-        nzeros = np.where(cat == 0)[0]
-        nones = np.where(cat == 1)[0]
         cv_splits = 10
 
         for num in features_num:
@@ -98,11 +134,12 @@ def main():
             ones = np.random.permutation(nones)
             for i in range(cv_splits):
                 print('gen_all -split: %d - num_features: %d - feat_sel:%s' %(i,num,feat_sel))
-                test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
+                test_index, train_index = get_intervals_all(cv_splits, i, zeros, ones, new_inf, subjects, categories)
                 print('tamaño de test: %s'%len(test_index))
-                train_full = ec.iloc[train_index]
+                print(new_inf['subject'].loc[test_index])
+                train_full = ec.loc[train_index]
                 y_train = cat[train_index]
-                test_full = ec.iloc[test_index]
+                test_full = ec.loc[test_index]
                 samples = test_full.shape[0]
                 samples_tr = train_full.shape[0]
                 start_time = time.time()
