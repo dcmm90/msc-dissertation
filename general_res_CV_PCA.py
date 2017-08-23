@@ -59,7 +59,7 @@ def main():
         samples = ec.shape[0]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
-        cv_splits = 10
+        cv_splits = 5
         div_zeros = np.ceil(len(zeros)/cv_splits)
         div_ones = np.ceil(len(ones)/cv_splits)
 
@@ -68,7 +68,6 @@ def main():
             gamma_val_rbf = np.zeros(cv_splits)
             c_val_lin = np.zeros(cv_splits)
             best_score_rbf = np.zeros(cv_splits)
-            #best_score_pol = np.zeros(cv_splits)
             best_score_lin = np.zeros(cv_splits)
             svm_accuracy = {}
             svm_accuracy_tr = {}
