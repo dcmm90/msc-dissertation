@@ -72,7 +72,7 @@ def main():
     blood = pickle.load( open( '../tissues/resi_norm_WB.p', "rb" ) )
     print('cargo datos')
     #'t_test','fisher','rfe'
-    features_sel = ['t_test','fisher','rfe']
+    features_sel = ['t_test','fisher','rfe', 'PCA']
 
     features_num = [5,10,15,20,50,75,100,250,500]
     #features_num = [5,10,15,20,50]
@@ -119,7 +119,7 @@ def main():
                 ec_train = ec.loc[valids]
 
                 start_time = time.time()
-                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                features_file = open_file + "/features_blood_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
                 print(ec_train.shape)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(ec_train, info, num)
@@ -132,9 +132,20 @@ def main():
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
 
-                train = train_blood[features_all[0:num]]
-                print(train.shape)
-                test = test_blood[features_all[0:num]]
+                if feat_sel == 'PCA':
+                    #SCALING
+                    scale = preprocessing.StandardScaler().fit(train_blood)
+                    train_sc = scale.transform(train_blood)
+                    test_sc = scale.transform(test_blood)
+                    #PCA
+                    pca = PCA(n_components=num)
+                    pca.fit(train_sc)
+                    train = pca.transform(train_sc)
+                    test = pca.transform(test_sc)
+                else:
+                    train = train_blood[features_all[0:num]]
+                    print(train.shape)
+                    test = test_blood[features_all[0:num]]
                 y_true = cat[test_index]
 
                 #SCALING
@@ -156,7 +167,7 @@ def main():
                  #'y_tr_poly': y_tr_pol,
                  'y_tr_lin': y_tr_lin,
                 })
-                pickle.dump(pred_train, open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(pred_train, open(open_file + "/pred_blood_tr_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                     #np.where((pred_train['y_train']==pred_train['y_tr_poly'])==True)[0].shape[0]/samples_tr,
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
@@ -167,15 +178,15 @@ def main():
                  #'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(open_file + "/pred_blood_CV_%s_%s_%d_%d.p" %(tissue, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     #np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
 
                 print(svm_accuracy[i])
 
-            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
-            pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_blood_tr_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
+            pickle.dump(svm_accuracy, open(open_file + "/accuracy_blood_CV_%s_%s_%d.p" % (tissue, feat_sel,num), "wb"))
             parameters = pd.DataFrame(
             {'C_rbf': c_val_rbf,
              'gamma_rbf': gamma_val_rbf,
