@@ -130,9 +130,9 @@ def main():
                 elif feat_sel == 'rfe':
                     features_all = fs.feature_sel_rfe(ec_train, info, num)
                 #elif feat_sel == 'chi2':
-
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                pickle.dump(features_all, open(features_file, "wb"))
+                if feat_sel == 't_test' or feat_sel == 'fisher' or feat_sel == 'rfe':
+                    pickle.dump(features_all, open(features_file, "wb"))
 
                 if feat_sel == 'PCA':
                     #SCALING
