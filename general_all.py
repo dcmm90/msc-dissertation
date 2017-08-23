@@ -22,11 +22,11 @@ def blockPrint():
 
 
 def load_data():
-    EC_data = pickle.load( open( 'tissues/resi_norm_EC.p', "rb" ) )
-    FC_data = pickle.load( open( 'tissues/resi_norm_FC.p', "rb" ) )
-    STG_data = pickle.load( open( 'tissues/resi_norm_STG.p', "rb" ) )
-    CER_data = pickle.load( open( 'tissues/resi_norm_CER.p', "rb" ) )
-    WB_data = pickle.load( open( 'tissues/resi_norm_WB.p', "rb" ) )
+    EC_data = pickle.load( open( '../tissues/resi_norm_EC.p', "rb" ) )
+    FC_data = pickle.load( open( '../tissues/resi_norm_FC.p', "rb" ) )
+    STG_data = pickle.load( open( '../tissues/resi_norm_STG.p', "rb" ) )
+    CER_data = pickle.load( open( '../tissues/resi_norm_CER.p', "rb" ) )
+    WB_data = pickle.load( open( '../tissues/resi_norm_WB.p', "rb" ) )
     frames = [EC_data,FC_data,STG_data,CER_data,WB_data]
     betaqn = pd.concat(frames)
     info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
