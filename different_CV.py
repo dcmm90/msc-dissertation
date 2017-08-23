@@ -48,7 +48,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues='EC'
+    tissue='EC'
     betaqn, info = load_data(tissue)
     #[100000, 50000, 1000, 500, 250, 100, 75, 50]
     num = 100
