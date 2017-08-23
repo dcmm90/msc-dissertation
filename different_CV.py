@@ -83,6 +83,7 @@ def main():
                 y_train = cat[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]
+                samples_tr = train_full.shape[0]
                 start_time = time.time()
                 features_file = open_file + "/features_diffCV_%s_%s_%d_%d.p" % (tissue, feat_sel, cv, i)
                 if feat_sel == 't_test':
