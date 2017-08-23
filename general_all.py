@@ -21,7 +21,7 @@ def blockPrint():
     sys.stdout = open(os.devnull, 'w')
 
 
-def load_data(tissue):
+def load_data():
     EC_data = pickle.load( open( 'tissues/resi_norm_EC.p', "rb" ) )
     FC_data = pickle.load( open( 'tissues/resi_norm_FC.p', "rb" ) )
     STG_data = pickle.load( open( 'tissues/resi_norm_STG.p', "rb" ) )
