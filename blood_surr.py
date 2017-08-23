@@ -144,11 +144,11 @@ def main():
 
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-6, 4, 100),gamma_range = np.logspace(-8, 2, 100))
+                C_range = np.logspace(-6, 4, 20),gamma_range = np.logspace(-8, 2, 20))
                 #(y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i],best_score_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
                 #C_range = np.logspace(-3, 2, 50),gamma_range = np.logspace(-6, 4, 50))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-6, 2, 100))
+                C_range = np.logspace(-6, 2, 20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
