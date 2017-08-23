@@ -56,16 +56,15 @@ def main():
     tissue='WB'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
+    print('cargo datos')
     features_sel = ['t_test','fisher','rfe']
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
     #features_num = [5,10,15,20,50]
     #features_num = [10000]
     for feat_sel in features_sel:
-        ec, info = load_data(tissue)
         #min_max_scaler = preprocessing.MinMaxScaler()
         #ec = min_max_scaler.fit_transform(betas)
-        print('cargo datos')
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
