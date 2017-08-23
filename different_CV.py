@@ -54,7 +54,7 @@ def main():
     num = 100
     CV = [3, 5, 7, 10, 15, 20, 25]
     features_sel = ['t_test','fisher','rfe']
-    for feat_sel in tissues:
+    for feat_sel in features_sel:
         open_file = os.path.realpath('../data_str/')
         ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
