@@ -75,7 +75,6 @@ def main():
         zeros = np.random.permutation(nzeros)
         ones = np.random.permutation(nones)
         for i in range(cv_splits):
-            print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' %(i,num,tissue,feat_sel))
             test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
             train_full = ec.iloc[train_index]
             y_train = cat[train_index]
