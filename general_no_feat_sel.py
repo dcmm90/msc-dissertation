@@ -99,27 +99,27 @@ def main():
              'best_rbf': best_score_rbf,
              'best_lin': best_score_lin,
             })
-            pickle.dump(parameters, open(save_file + "/params_nfs_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
+            pickle.dump(parameters, open(save_file + "/params_nfs_%s_%d.p" %(tissue,i), "wb"))
             predictions = pd.DataFrame(
             {'y_true': y_true,
              'y_rbf': y_pred_rbf,
              'y_lin': y_pred_lin,
             })
-            pickle.dump(predictions, open(save_file + "/pred_nfs_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
+            pickle.dump(predictions, open(save_file + "/pred_nfs_%s_%d.p" %(tissue,i), "wb"))
             pred_train = pd.DataFrame(
             {'y_train': y_train,
              'y_tr_rbf': y_tr_rbf,
              'y_tr_lin': y_tr_lin,
             })
-            pickle.dump(pred_train, open(save_file + "/pred_nfs_LEO_tr_%s_%s_%d.p" %(tissue,feat_sel, i), "wb"))
+            pickle.dump(pred_train, open(save_file + "/pred_nfs_tr_%s_%d.p" %(tissue, i), "wb"))
             svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                 np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
             svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                 np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
             print(svm_accuracy[i])
             print(svm_accuracy_tr[i])
-        pickle.dump(svm_accuracy, open(save_file + "/accuracy_nfs_LEO_%s_%s.p" % (tissue,feat_sel), "wb"))
-        pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_nfs_LEO_tr_%s_%s.p" % (tissue,feat_sel), "wb"))
+        pickle.dump(svm_accuracy, open(save_file + "/accuracy_nfs_%s_%s.p" % (tissue), "wb"))
+        pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_nfs_tr_%s_%s.p" % (tissue), "wb"))
 
 
 
