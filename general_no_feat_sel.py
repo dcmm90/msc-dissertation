@@ -75,6 +75,7 @@ def main():
         zeros = np.random.permutation(nzeros)
         ones = np.random.permutation(nones)
         for i in range(cv_splits):
+            print('tissue:%s cv split:%d'%(tissue,i))
             test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
             train_full = ec.iloc[train_index]
             y_train = cat[train_index]
@@ -118,8 +119,8 @@ def main():
                                 np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
             print(svm_accuracy[i])
             print(svm_accuracy_tr[i])
-        pickle.dump(svm_accuracy, open(save_file + "/accuracy_nfs_%s_%s.p" % (tissue), "wb"))
-        pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_nfs_tr_%s_%s.p" % (tissue), "wb"))
+        pickle.dump(svm_accuracy, open(save_file + "/accuracy_nfs_%s.p" % (tissue), "wb"))
+        pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_nfs_tr_%s.p" % (tissue), "wb"))
 
 
 
