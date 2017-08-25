@@ -54,7 +54,7 @@ def main():
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
-    features_sel = ['t_test','fisher','rfe','PCA']
+    features_sel = ['PCA']
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     for feat_sel in features_sel:
         cat = info['braak_bin'].loc[ec.index]
