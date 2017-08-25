@@ -53,7 +53,7 @@ def main():
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
-    features_sel = ['PCA']
+    features_sel = ['t_test','fisher','rfe']
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     for feat_sel in features_sel:
         cat = info['braak_bin'].loc[ec.index]
@@ -92,8 +92,7 @@ def main():
                 elif feat_sel == 'rfe':
                     features_all = fs.feature_sel_rfe(train_full, info, num)
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                if feat_sel == 't_test' or feat_sel == 'fisher' or feat_sel == 'rfe':
-                    pickle.dump(features_all, open(features_file, "wb"))
+                pickle.dump(features_all, open(features_file, "wb"))
 
                 train = train_full[features_all[0:num]]
                 print(train.shape)
