@@ -92,7 +92,8 @@ def main():
                 elif feat_sel == 'rfe':
                     features_all = fs.feature_sel_rfe(train_full, info, num)
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                pickle.dump(features_all, open(features_file, "wb"))
+                if feat_sel == 't_test' or feat_sel == 'fisher' or feat_sel == 'rfe':
+                    pickle.dump(features_all, open(features_file, "wb"))
 
                 train = train_full[features_all[0:num]]
                 print(train.shape)
