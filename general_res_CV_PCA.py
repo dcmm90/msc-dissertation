@@ -48,8 +48,8 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC', 'CER','FC','STG','WB']
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    tissues=['EC','CER','FC','STG','WB']
+    features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     for tissue in tissues:
         feat_sel = 'PCA'
         open_file = os.path.realpath('../data_str/')
@@ -93,9 +93,10 @@ def main():
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-6, 4, 20),gamma_range = np.logspace(-8, 2, 20))
+                C_range = np.logspace(-4, 4, 20),gamma_range = np.logspace(-7, 2, 20))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
                 C_range = np.logspace(-3, 2, 6))
+
 
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(

@@ -14,8 +14,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-from sklearn.decomposition import PCA
-from sklearn import preprocessing
+
 
 
 # Disable
@@ -50,7 +49,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='CER'
+    tissue='WB'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
@@ -95,23 +94,10 @@ def main():
                 #elif feat_sel == 'chi2':
 
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-
-
-                if feat_sel == 'PCA':
-                    #SCALING
-                    scale = preprocessing.StandardScaler().fit(train_full)
-                    train_sc = scale.transform(train_full)
-                    test_sc = scale.transform(test_full)
-                    #PCA
-                    pca = PCA(n_components=num)
-                    pca.fit(train_sc)
-                    train = pca.transform(train_sc)
-                    test = pca.transform(test_sc)
-                else:
-                    pickle.dump(features_all, open(features_file, "wb"))
-                    train = train_full[features_all[0:num]]
-                    print(train.shape)
-                    test = test_full[features_all[0:num]]
+                pickle.dump(features_all, open(features_file, "wb"))
+                train = train_full[features_all[0:num]]
+                print(train.shape)
+                test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
