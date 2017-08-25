@@ -14,6 +14,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn import preprocessing
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 
 # Disable
@@ -48,7 +50,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='STG'
+    tissue='EC'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
