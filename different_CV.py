@@ -99,10 +99,11 @@ def main():
                 test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
                 start_time = time.time()
+
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-6, 4, 20),gamma_range = np.logspace(-8, 2, 20))
+                C_range = np.logspace(-4, 4, 20),gamma_range = np.logspace(-7, 2, 20))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-6, 2, 20))
+                C_range = np.logspace(-4, 3, 20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
 
                 pred_train = pd.DataFrame(
