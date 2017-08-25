@@ -119,7 +119,7 @@ def main():
                 #elif feat_sel == 'chi2':
 
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
-                pickle.dump(features_all, open(features_file, "wb"))
+
 
                 if feat_sel == 'PCA':
                     #SCALING
@@ -132,6 +132,7 @@ def main():
                     train = pca.transform(train_sc)
                     test = pca.transform(test_sc)
                 else:
+                    pickle.dump(features_all, open(features_file, "wb"))
                     train = train_full[features_all[0:num]]
                     print(train.shape)
                     test = test_full[features_all[0:num]]
