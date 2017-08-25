@@ -91,10 +91,9 @@ def main():
                     features_all = fs.feature_fisher_score_parallel(train_full, info, num)
                 elif feat_sel == 'rfe':
                     features_all = fs.feature_sel_rfe(train_full, info, num)
-                #elif feat_sel == 'chi2':
-
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
+
                 train = train_full[features_all[0:num]]
                 print(train.shape)
                 test = test_full[features_all[0:num]]
