@@ -48,7 +48,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='EC'
+    tissue='CER'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
