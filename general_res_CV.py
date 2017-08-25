@@ -22,11 +22,6 @@ def blockPrint():
 
 
 def load_data(tissue):
-    #beta_file = os.path.realpath('../tissues/residuals_%s.csv.zip'%(tissue))
-    #zipfile = ZipFile(beta_file)
-    #zipfile.getinfo('residuals_%s.csv'%(tissue)).file_size += (2 ** 64) - 1
-    #betaqn = pd.read_csv(zipfile.open('residuals_%s.csv'%(tissue)),index_col=0,sep=',')
-    #betaqn = betaqn.T
     betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
     info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
 
@@ -53,19 +48,13 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissue='WB'
+    tissue='EC'
     open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
     print('cargo datos')
-    features_sel = ['t_test','fisher','rfe']
-    #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
-    #features_num = [5,10,15,20,50]
-    #features_num = [10000]
+    features_sel = ['t_test','fisher','rfe','PCA']
+    features_num = [5,10,15,20,50,75,100,250,500,1000,5000,10000]
     for feat_sel in features_sel:
-        #min_max_scaler = preprocessing.MinMaxScaler()
-        #ec = min_max_scaler.fit_transform(betas)
-        #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
         samples = ec.shape[0]
@@ -106,16 +95,30 @@ def main():
                 print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                 pickle.dump(features_all, open(features_file, "wb"))
 
-                train = train_full[features_all[0:num]]
-                print(train.shape)
-                test = test_full[features_all[0:num]]
+                if feat_sel == 'PCA':
+                    #SCALING
+                    scale = preprocessing.StandardScaler().fit(train_full)
+                    train_sc = scale.transform(train_full)
+                    test_sc = scale.transform(test_full)
+                    #PCA
+                    pca = PCA(n_components=num)
+                    pca.fit(train_sc)
+                    train = pca.transform(train_sc)
+                    test = pca.transform(test_sc)
+                else:
+                    train = train_full[features_all[0:num]]
+                    print(train.shape)
+                    test = test_full[features_all[0:num]]
                 y_true = cat[test_index]
-
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-6, 4, 20),gamma_range = np.logspace(-8, 2, 20))
+                C_range = np.logspace(-4, 4, 20),gamma_range = np.logspace(-7, 2, 20))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-6, 2, 20))
+                C_range = np.logspace(-4, 3, 20))
+                #(y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
+                #C_range = np.logspace(-6, 4, 20),gamma_range = np.logspace(-8, 2, 20))
+                #(y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
+                #C_range = np.logspace(-6, 2, 20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,

@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.ensemble import RandomForestClassifier
 
-CV_numbers = 3
+CV_numbers = 5
 
 def SVM_classify_rbf(train, y_train, test,C_range = np.logspace(-2, 10, 13),gamma_range = np.logspace(-9, 3, 13)):
     #C_range = np.logspace(-2, 10, 13)
