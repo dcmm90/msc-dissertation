@@ -108,7 +108,7 @@ def main():
     categories = new_inf['braak_bin'].loc[fromtis.index]
     print('cargo datos')
     #'t_test','fisher','rfe'
-    features_sel = ['t_test','fisher','rfe','PCA']
+    features_sel = ['rfe','PCA']
     #features_num = [20,50,75,100,250,500,1000,]
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
     features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
@@ -117,7 +117,8 @@ def main():
     nzeros = np.where(categories == 0)[0]
     nones = np.where(categories == 1)[0]
     for feat_sel in features_sel:
-
+        if feat_sel == 'rfe':
+            features_num = [50,75,100,250,500,1000,5000]
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
