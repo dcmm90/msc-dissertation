@@ -75,7 +75,7 @@ def main():
     features_sel = ['t_test','fisher','rfe','PCA']
     #features_num = [20,50,75,100,250,500,1000,]
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
-    features_num = [5,10,15,20,50,75,100,250,500,1000]
+    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
     #features_num = [5,10,15,20,50]
     #features_num = [10]
     for feat_sel in features_sel:
