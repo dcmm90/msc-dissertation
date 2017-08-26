@@ -68,7 +68,7 @@ def main():
         for feat_sel in features_sel:
             beta, info = load_data(tissue)
             vari = beta.var()
-            ind = np.argsort(vari)[-100000:]
+            ind = np.argsort(vari)[-50000:]
             ec = beta.iloc[:,ind]
             print('cargo datos')
             #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
