@@ -51,8 +51,8 @@ def get_intervals(cv_splits, i, zeros, ones):
 def main():
     tissues=['EC','CER','WB','FC','STG']
 
-    cv_splits = 10
-    features_sel = ['t_test','fisher','rfe','leo']
+    cv_splits = 5
+    features_sel = ['t_test','fisher','rfe','leo','leo_2']
     num = 15
 
     for feat_sel in features_sel:
@@ -74,6 +74,10 @@ def main():
                 features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
                         'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
                         'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
+            elif feat_sel == 'leo_2':
+                features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
+                        'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
+                        'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
             print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_all, open(features_file, "wb"))
 
@@ -113,11 +117,11 @@ def main():
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-4, 4, 100),gamma_range = np.logspace(-8, 2, 100))
+                C_range = np.logspace(-4, 4, 20),gamma_range = np.logspace(-7, 2, 20))
                 #(y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i],best_score_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
                 #C_range = np.logspace(-5, 2, 50),gamma_range = np.logspace(-6, 4, 50))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-5, 2, 100))
+                C_range = np.logspace(-4, 3, 20))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 parameters = pd.DataFrame(
                 {'C_rbf': c_val_rbf,
