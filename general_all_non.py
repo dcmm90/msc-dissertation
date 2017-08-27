@@ -108,17 +108,16 @@ def main():
     categories = new_inf['braak_bin'].loc[fromtis.index]
     print('cargo datos')
     #'t_test','fisher','rfe'
-    features_sel = ['rfe','PCA']
+    features_sel = ['PCA']
     #features_num = [20,50,75,100,250,500,1000,]
     #features_num = [20,50,75,100,250,500,1000,5000,10000,100000]
-    features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    #features_num = [5,10,15,20,50,75,100,250,500,1000,5000]
+    features_num = [5,10,15,20,50,75,100]
     #features_num = [5,10,15,20,50]
     #features_num = [10]
     nzeros = np.where(categories == 0)[0]
     nones = np.where(categories == 1)[0]
     for feat_sel in features_sel:
-        if feat_sel == 'rfe':
-            features_num = [250,500,1000,5000]
         #ec = betaqn.loc[info[(info.tissue == tissue) & (info.braak_stage != 'Exclude')].index]
         cat = info['braak_bin'].loc[ec.index]
         svm_accuracy = {}
@@ -180,7 +179,7 @@ def main():
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
                 C_range = np.logspace(-3, 5, 10),gamma_range = np.logspace(-6, 3, 10))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-3, 5, 10))
+                C_range = np.logspace(-3, 1, 10))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
