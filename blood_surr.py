@@ -67,7 +67,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['STG','CER','FC']
+    tissues=['EC','STG','CER','FC']
     for tissue in tissues:
         open_file = os.path.realpath('../data_str/')
         ec, info = load_data(tissue)
@@ -133,15 +133,9 @@ def main():
                     print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                     if feat_sel == 't_test' or feat_sel == 'fisher' or feat_sel == 'rfe':
                         pickle.dump(features_all, open(features_file, "wb"))
-                    #SCALING
-                    scale = preprocessing.StandardScaler().fit(train_blood)
-                    train_sc = scale.transform(train_blood)
-                    test_sc = scale.transform(test_blood)
-                    #PCA
-                    pca = PCA(n_components=num)
-                    pca.fit(train_sc)
-                    train = pca.transform(train_sc)
-                    test = pca.transform(test_sc)
+                    train = train_blood[features_all]
+                    print(train.shape)
+                    test = test_blood[features_all]
 
                     y_true = cat[test_index]
 
