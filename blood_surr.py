@@ -67,7 +67,7 @@ def get_intervals(cv_splits, i, zeros, ones):
 
 
 def main():
-    tissues=['EC','STG','CER','FC']
+    tissues=['STG','CER','FC']
     for tissue in tissues:
         open_file = os.path.realpath('../data_str/')
         ec, info = load_data(tissue)
