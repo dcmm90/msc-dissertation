@@ -52,8 +52,8 @@ def main():
     tissues=['EC','CER','WB','FC','STG']
 
     cv_splits = 5
-    features_sel = ['t_test','fisher','rfe','leo','leo_2']
-    num = 15
+    features_sel = ['t_test','fisher','rfe','leo','leo_all','jager']
+    num = 12
 
     for feat_sel in features_sel:
         for tissue in tissues:
@@ -71,13 +71,32 @@ def main():
             elif feat_sel == 'rfe':
                 features_all = fs.feature_sel_rfe(ec, info, num)
             elif feat_sel == 'leo':
-                features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
-                        'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
-                        'cg05066959', 'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
-            elif feat_sel == 'leo_2':
-                features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298', 'cg22962123',
-                        'cg13076843', 'cg25594100', 'cg00621289', 'cg19803550', 'cg03169557',
-                        'cg05810363', 'cg22883290', 'cg02308560', 'cg11823178']
+                if tissue == 'EC':
+                    features_all = ['cg11823178','cg22997194','cg06653632','cg05066959',
+                            'cg24152732','cg14972141','cg04029027','cg05030077',
+                            'cg04151012','cg18522315','cg20618448','cg24770624']
+                elif tissue == 'STG':
+                    features_all= ['cg04525464','cg06108383','cg10752406','cg25018458',
+                                    'cg13942103','cg00767503','cg02961798','cg05810363',
+                                    'cg15849154','cg06745695','cg15520955','cg03601797']
+                elif tissue == 'FC':
+                    features_all = ['cg04147621','cg05726109','cg11724984','cg23968456',
+                                    'cg24671734','cg06926306','cg07859799','cg02997560',
+                                    'cg13507269','cg19900677','cg14071588','cg15928398']
+                elif tissue == 'CER':
+                    features_all = ['cg22570053','cg00065957','cg21781422','cg17715556',
+                                    'cg01339004','cg18882687','cg20767910','cg24462001',
+                                    'cg07869256','cg20698501','cg21618635','cg17468317']
+                else:
+                    continue
+            elif feat_sel == 'leo_all':
+                leo_ALL = ['cg11823178','cg25018458','cg05810363','cg05066959',
+                            'cg18428542','cg16665310','cg05912299','cg03169557',
+                            'cg23968456','cg02672452','cg04147621','cg17910899']
+            elif feat_sel == 'jager':
+                features_all  = ['cg11724984', 'cg23968456', 'cg15821544', 'cg16733298',
+                                'cg22962123','cg13076843', 'cg25594100', 'cg00621289',
+                                'cg19803550', 'cg03169557','cg05066959','cg05810363']
             print("--- %s seconds for feature selection ---" % (time.time() - start_time))
             pickle.dump(features_all, open(features_file, "wb"))
 
@@ -117,11 +136,11 @@ def main():
                 y_true = cat[test_index]
                 start_time = time.time()
                 (y_pred_rbf, y_tr_rbf, c_val_rbf[i], gamma_val_rbf[i],best_score_rbf[i]) = cl.SVM_classify_rbf_all(train, y_train,test,y_true,
-                C_range = np.logspace(-4, 4, 20),gamma_range = np.logspace(-7, 2, 20))
+                C_range = np.logspace(-4, 4, 10),gamma_range = np.logspace(-5, 2, 10))
                 #(y_pred_pol, y_tr_pol, c_val_pol[i], gamma_val_pol[i],best_score_pol[i]) = cl.SVM_classify_poly_all(train, y_train, test, y_true,
                 #C_range = np.logspace(-5, 2, 50),gamma_range = np.logspace(-6, 4, 50))
                 (y_pred_lin, y_tr_lin, c_val_lin[i], best_score_lin[i]) = cl.SVM_classify_lin_all(train, y_train, test, y_true,
-                C_range = np.logspace(-4, 2, 20))
+                C_range = np.logspace(-4, 3, 10))
                 print("--- %s seconds for classification ---" % (time.time() - start_time))
                 parameters = pd.DataFrame(
                 {'C_rbf': c_val_rbf,
@@ -133,21 +152,21 @@ def main():
                  #'best_poly': best_score_pol,
                  'best_lin': best_score_lin,
                 })
-                pickle.dump(parameters, open(save_file + "/params_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
+                pickle.dump(parameters, open(save_file + "/params_LEO2_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
                 predictions = pd.DataFrame(
                 {'y_true': y_true,
                  'y_rbf': y_pred_rbf,
                 # 'y_poly': y_pred_pol,
                  'y_lin': y_pred_lin,
                 })
-                pickle.dump(predictions, open(save_file + "/pred_LEO_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
+                pickle.dump(predictions, open(save_file + "/pred_LEO2_%s_%s_%d.p" %(tissue,feat_sel,i), "wb"))
                 pred_train = pd.DataFrame(
                 {'y_train': y_train,
                  'y_tr_rbf': y_tr_rbf,
                 # 'y_tr_poly': y_tr_pol,
                  'y_tr_lin': y_tr_lin,
                 })
-                pickle.dump(pred_train, open(save_file + "/pred_LEO_tr_%s_%s_%d.p" %(tissue,feat_sel, i), "wb"))
+                pickle.dump(pred_train, open(save_file + "/pred_LEO2_tr_%s_%s_%d.p" %(tissue,feat_sel, i), "wb"))
                 svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                     #np.where((predictions['y_true']==predictions['y_poly'])==True)[0].shape[0]/samples,
                                     np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
@@ -156,8 +175,8 @@ def main():
                                     np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
                 print(svm_accuracy[i])
                 print(svm_accuracy_tr[i])
-            pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO_%s_%s.p" % (tissue,feat_sel), "wb"))
-            pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO_tr_%s_%s.p" % (tissue,feat_sel), "wb"))
+            pickle.dump(svm_accuracy, open(save_file + "/accuracy_LEO2_%s_%s.p" % (tissue,feat_sel), "wb"))
+            pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO2_tr_%s_%s.p" % (tissue,feat_sel), "wb"))
 
 
 
