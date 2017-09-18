@@ -1,25 +1,34 @@
+# ----------------------------------------------------
+# Dissertation MSc CSML
+# Author: Diana Carolina Montanes Mondragon
+# ----------------------------------------------------
+# file_name: different_CV.py
+# description: This file contains the main function for
+#               Experiment 2
+# ----------------------------------------------------
+
+# ------------------- imports -------------------------
 from __future__ import division
 import time
 import pandas as pd
 import numpy as np
-from sklearn.metrics import classification_report
 import pickle
 import classification as cl
 import feature_selection as fs
+import utils_msc as ut
 import os.path
-from zipfile import ZipFile
-import sys, os
-from os.path import join, dirname, abspath
-from pathlib import Path
-from sklearn.model_selection import StratifiedKFold
+import os
+# ----------------------------------------------------
 
 
-# Disable
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-
-
-
+# ------------------- Function -------------------------
+# load_data(tissue)
+# This function load the data
+# inputs: tissue - tissue to load data from
+# returns: (betaqn, info)
+#          betaqn - DNA methylation from the tissue
+#          info - info from DNA methylation data
+# ----------------------------------------------------
 def load_data(tissue):
     betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
     info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
@@ -27,31 +36,11 @@ def load_data(tissue):
     return (betaqn, info)
 
 
-def get_intervals(cv_splits, i, zeros, ones):
-    div_zeros = int(np.floor(len(zeros)/cv_splits))
-    div_ones = int(np.floor(len(ones)/cv_splits))
-    if (i<(cv_splits-1)):
-        mini_zero = div_zeros*i
-        maxi_zero = (div_zeros*i) + div_zeros
-        mini_one = div_ones*i
-        maxi_one = (div_ones*i) + div_ones
-    else:
-        mini_zero = div_zeros*i
-        maxi_zero = len(zeros)
-        mini_one = div_ones*i
-        maxi_one = len(ones)
-    index_zeros = list(zeros[mini_zero: maxi_zero])
-    index_ones = list(ones[mini_one: maxi_one])
-    test = np.array(index_zeros + index_ones )
-    train = np.array(list(set(list(ones)+list(zeros)) - set(test)))
-    return test,train
-
 
 def main():
     tissues=['WB']
     for tissue in tissues:
         betaqn, info = load_data(tissue)
-        #[100000, 50000, 1000, 500, 250, 100, 75, 50]
         num = 100
         CV = [3, 5, 7, 10, 15, 20, 25]
         features_sel = ['rfe']
@@ -59,15 +48,11 @@ def main():
             open_file = os.path.realpath('../data_str/')
             ec = betaqn
             cat = info['braak_bin'].loc[ec.index]
-            svm_accuracy = {}
-            samples = ec.shape[0]
             zeros = np.where(cat == 0)[0]
             ones = np.where(cat == 1)[0]
 
             for cv in CV:
                 cv_splits = cv
-                div_zeros = np.ceil(len(zeros)/cv_splits)
-                div_ones = np.ceil(len(ones)/cv_splits)
                 c_val_rbf = np.zeros(cv_splits)
                 gamma_val_rbf = np.zeros(cv_splits)
                 c_val_lin = np.zeros(cv_splits)
@@ -79,7 +64,7 @@ def main():
                 ones = np.random.permutation(ones)
                 for i in range(cv_splits):
                     print('split: %d - cv: %d' %(i,cv))
-                    test_index, train_index = get_intervals(cv_splits, i, zeros, ones)
+                    test_index, train_index = ut.get_intervals(cv_splits, i, zeros, ones)
                     train_full = ec.iloc[train_index]
                     y_train = cat[train_index]
                     test_full = ec.iloc[test_index]
