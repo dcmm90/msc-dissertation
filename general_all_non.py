@@ -23,10 +23,10 @@ from sklearn import preprocessing
 # ----------------------------------------------------
 
 # ------------------- Constant -------------------------
-open_file = os.path.realpath('../data_str/')
-features_sel = ['t_test','fisher','rfe','PCA']
-features_num = [5, 10, 15, 20, 50, 75, 100]
-tissue = 'all_non'
+OPEN_FILE = os.path.realpath('../data_str/')
+FEATURES_SEL = ['t_test','fisher','rfe','PCA']
+FEATURES_NUM = [5, 10, 15, 20, 50, 75, 100]
+TISSUE = 'all_non'
 # ----------------------------------------------------
 
 
@@ -45,10 +45,10 @@ def general_all_non():
     print('cargo datos')
     nzeros = np.where(categories == 0)[0]
     nones = np.where(categories == 1)[0]
-    for feat_sel in features_sel:
+    for feat_sel in FEATURES_SEL:
         cat = info['braak_bin'].loc[ec.index]
         cv_splits = 5
-        for num in features_num:
+        for num in FEATURES_NUM:
             c_val_rbf = np.zeros(cv_splits)
             gamma_val_rbf = np.zeros(cv_splits)
             c_val_lin = np.zeros(cv_splits)
@@ -69,7 +69,7 @@ def general_all_non():
                 samples = test_full.shape[0]
                 samples_tr = train_full.shape[0]
                 start_time = time.time()
-                features_file = open_file + "/features_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                features_file = OPEN_FILE + "/features_CV_%s_%s_%d_%d.p" % (TISSUE, feat_sel, num, i)
                 print(train_full.shape)
                 if feat_sel == 't_test':
                     features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
@@ -110,7 +110,7 @@ def general_all_non():
                      'y_tr_lin': y_tr_lin,
                      })
                 pickle.dump(pred_train,
-                            open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                            open(OPEN_FILE + "/pred_tr_CV_%s_%s_%d_%d.p" % (TISSUE, feat_sel, num, i), "wb"))
                 svm_accuracy_tr[i] = [
                     np.where((pred_train['y_train'] == pred_train['y_tr_rbf']) == True)[0].shape[0] / samples_tr,
                     np.where((pred_train['y_train'] == pred_train['y_tr_lin']) == True)[0].shape[0] / samples_tr]
@@ -120,15 +120,15 @@ def general_all_non():
                      'y_rbf': y_pred_rbf,
                      'y_lin': y_pred_lin,
                      })
-                pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(OPEN_FILE + "/pred_CV_%s_%s_%d_%d.p" % (TISSUE, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [
                     np.where((predictions['y_true'] == predictions['y_rbf']) == True)[0].shape[0] / samples,
                     np.where((predictions['y_true'] == predictions['y_lin']) == True)[0].shape[0] / samples]
 
                 print(svm_accuracy[i])
 
-            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
-            pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+            pickle.dump(svm_accuracy_tr, open(OPEN_FILE + "/accuracy_tr_CV_%s_%s_%d.p" % (TISSUE, feat_sel, num), "wb"))
+            pickle.dump(svm_accuracy, open(OPEN_FILE + "/accuracy_CV_%s_%s_%d.p" % (TISSUE, feat_sel, num), "wb"))
             parameters = pd.DataFrame(
                 {'C_rbf': c_val_rbf,
                  'gamma_rbf': gamma_val_rbf,
@@ -136,7 +136,7 @@ def general_all_non():
                  'best_rbf': best_score_rbf,
                  'best_lin': best_score_lin,
                  })
-            pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(OPEN_FILE + "/params_CV_%s_%s_%d.p" % (TISSUE, feat_sel, num), "wb"))
 
 
 # ------------------- Function -------------------------

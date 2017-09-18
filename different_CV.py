@@ -16,15 +16,14 @@ import pickle
 import classification as cl
 import feature_selection as fs
 import utils_msc as ut
-import os.path
 import os
 # ----------------------------------------------------
 
 # ------------------- Constant -------------------------
-open_file = os.path.realpath('../data_str/')
-num = 100
+OPEN_FILE = os.path.realpath('../data_str/')
+NUM = 100
 CV = [3, 5, 7, 10, 15, 20, 25]
-tissues = ['EC', 'FC', 'STG', 'WB', 'CER']
+TISSUES = ['EC', 'FC', 'STG', 'WB', 'CER']
 # ----------------------------------------------------
 
 
@@ -49,7 +48,7 @@ def load_data(tissue):
 # in outer loop.
 # ----------------------------------------------------
 def main():
-    for tissue in tissues:
+    for tissue in TISSUES:
         betaqn, info = load_data(tissue)
         features_sel = ['rfe']
         for feat_sel in features_sel:
@@ -78,18 +77,18 @@ def main():
                     samples = test_full.shape[0]
                     samples_tr = train_full.shape[0]
                     start_time = time.time()
-                    features_file = open_file + "/features_diffCV_%s_%s_%d_%d.p" % (tissue, feat_sel, cv, i)
+                    features_file = OPEN_FILE + "/features_diffCV_%s_%s_%d_%d.p" % (tissue, feat_sel, cv, i)
                     if feat_sel == 't_test':
-                        features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
+                        features_all = fs.feature_sel_t_test_parallel(train_full, info, NUM )
                     elif feat_sel == 'fisher':
-                        features_all = fs.feature_fisher_score_parallel(train_full, info, num)
+                        features_all = fs.feature_fisher_score_parallel(train_full, info, NUM )
                     elif feat_sel == 'rfe':
-                        features_all = fs.feature_sel_rfe(train_full, info, num)
+                        features_all = fs.feature_sel_rfe(train_full, info, NUM )
                     print("--- %s seconds for feature selection ---" % (time.time() - start_time))
                     pickle.dump(features_all, open(features_file, "wb"))
 
-                    train = train_full[features_all[0:num]]
-                    test = test_full[features_all[0:num]]
+                    train = train_full[features_all[0:NUM ]]
+                    test = test_full[features_all[0:NUM ]]
                     y_true = cat[test_index]
                     start_time = time.time()
 
@@ -104,7 +103,7 @@ def main():
                      'y_tr_rbf': y_tr_rbf,
                      'y_tr_lin': y_tr_lin,
                     })
-                    pickle.dump(pred_train, open(open_file + "/pred_tr_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
+                    pickle.dump(pred_train, open(OPEN_FILE + "/pred_tr_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
                     svm_accuracy_tr[i] = [np.where((pred_train['y_train']==pred_train['y_tr_rbf'])==True)[0].shape[0]/samples_tr,
                                         np.where((pred_train['y_train']==pred_train['y_tr_lin'])==True)[0].shape[0]/samples_tr]
                     print(svm_accuracy_tr[i])
@@ -113,13 +112,13 @@ def main():
                      'y_rbf': y_pred_rbf,
                      'y_lin': y_pred_lin,
                     })
-                    pickle.dump(predictions, open(open_file + "/pred_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
+                    pickle.dump(predictions, open(OPEN_FILE + "/pred_diffCV_%s_%s_%d_%d.p" %(tissue, feat_sel, cv, i), "wb"))
                     svm_accuracy[i] = [np.where((predictions['y_true']==predictions['y_rbf'])==True)[0].shape[0]/samples,
                                         np.where((predictions['y_true']==predictions['y_lin'])==True)[0].shape[0]/samples]
 
                     print(svm_accuracy[i])
-                pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
-                pickle.dump(svm_accuracy, open(open_file + "/accuracy_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
+                pickle.dump(svm_accuracy_tr, open(OPEN_FILE + "/accuracy_tr_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
+                pickle.dump(svm_accuracy, open(OPEN_FILE + "/accuracy_diffCV_%s_%s_%d.p" % (tissue, feat_sel,cv), "wb"))
                 parameters = pd.DataFrame(
                 {'C_rbf': c_val_rbf,
                  'gamma_rbf': gamma_val_rbf,
@@ -127,7 +126,7 @@ def main():
                  'best_rbf': best_score_rbf,
                  'best_lin': best_score_lin,
                 })
-                pickle.dump(parameters, open(open_file + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, cv), "wb"))
+                pickle.dump(parameters, open(OPEN_FILE + "/params_diffCV_%s_%s_%d.p" %(tissue, feat_sel, cv), "wb"))
 
 
 

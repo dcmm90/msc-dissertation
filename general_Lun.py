@@ -21,13 +21,11 @@ import os
 # ----------------------------------------------------
 
 # ------------------- Constant -------------------------
-open_file = os.path.realpath('../data_str/')
-tissues = ['EC', 'CER', 'WB', 'FC', 'STG']
-features_sel = ['t_test', 'fisher', 'rfe', 'leo', 'leo_all', 'jager']
-features_num = [5, 10, 15, 20, 50, 75, 100]
-tissue = 'all_non'
-cv_splits = 5
-num = 12
+OPEN_FILE = os.path.realpath('../data_str/')
+TISSUES = ['EC', 'CER', 'WB', 'FC', 'STG']
+FEATURES_SEL = ['t_test', 'fisher', 'rfe', 'leo', 'leo_all', 'jager']
+FEATURES_NUM = [5, 10, 15, 20, 50, 75, 100]
+CV_SPLITS = 5
 # ----------------------------------------------------
 
 
@@ -37,13 +35,15 @@ num = 12
 # groups of features using all the selection of data
 # ----------------------------------------------------
 def general_Lun():
-    for feat_sel in features_sel:
-        for tissue in tissues:
-            save_file = open_file
+    tissue = 'all_non'
+    num = 12
+    for feat_sel in FEATURES_SEL:
+        for tissue in TISSUES:
+            save_file = OPEN_FILE
             betaqn, info = load_data(tissue)
             ec = betaqn
             start_time = time.time()
-            features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
+            features_file = OPEN_FILE + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
             if feat_sel == 't_test':
                 features_all = fs.feature_sel_t_test_parallel(ec, info, num)
             elif feat_sel == 'fisher':
@@ -88,17 +88,17 @@ def general_Lun():
             svm_accuracy = {}
             svm_accuracy_tr = {}
 
-            c_val_rbf = np.zeros(cv_splits)
-            gamma_val_rbf = np.zeros(cv_splits)
-            c_val_lin = np.zeros(cv_splits)
-            best_score_rbf = np.zeros(cv_splits)
-            best_score_lin = np.zeros(cv_splits)
+            c_val_rbf = np.zeros(CV_SPLITS)
+            gamma_val_rbf = np.zeros(CV_SPLITS)
+            c_val_lin = np.zeros(CV_SPLITS)
+            best_score_rbf = np.zeros(CV_SPLITS)
+            best_score_lin = np.zeros(CV_SPLITS)
 
             zeros = np.random.permutation(nzeros)
             ones = np.random.permutation(nones)
-            for i in range(cv_splits):
+            for i in range(CV_SPLITS):
                 print('split: %d - num_features: %d - tissue:%s- feat_sel:%s' % (i, num, tissue, feat_sel))
-                test_index, train_index = ut.get_intervals(cv_splits, i, zeros, ones)
+                test_index, train_index = ut.get_intervals(CV_SPLITS, i, zeros, ones)
                 train_full = ec.iloc[train_index]
                 test_full = ec.iloc[test_index]
                 samples = test_full.shape[0]

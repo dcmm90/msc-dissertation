@@ -21,27 +21,27 @@ from sklearn import preprocessing
 # ----------------------------------------------------
 
 # ------------------- Constant -------------------------
-open_file = os.path.realpath('../data_str/')
-tissues = ['EC', 'FC', 'STG', 'CER', 'WB']
-features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000, 10000]
+OPEN_FILE = os.path.realpath('../data_str/')
+TISSUES = ['EC', 'FC', 'STG', 'CER', 'WB']
+FEATURES_NUM = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000, 10000]
 feat_sel = 'PCA'
 # ----------------------------------------------------
 
 
 # ------------------- Function -------------------------
-# general_PCA_CV(tissues)
+# general_PCA_CV()
 # This function performs the nested cross-validation for
 # data using PCA as dimension reduction.
-# inputs: tissues - the tissues
+# inputs: TISSUES - the TISSUES
 # ----------------------------------------------------
 def general_PCA_CV():
-    for tissue in tissues:
+    for tissue in TISSUES:
         ec, info = load_data(tissue)
         cat = info['braak_bin'].loc[ec.index]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
         cv_splits = 5
-        for num in features_num:
+        for num in FEATURES_NUM:
             c_val_rbf = np.zeros(cv_splits)
             gamma_val_rbf = np.zeros(cv_splits)
             c_val_lin = np.zeros(cv_splits)
@@ -82,7 +82,7 @@ def general_PCA_CV():
                      'y_tr_lin': y_tr_lin,
                      })
                 pickle.dump(pred_train,
-                            open(open_file + "/pred_tr_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                            open(OPEN_FILE + "/pred_tr_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
                 svm_accuracy_tr[i] = [
                     np.where((pred_train['y_train'] == pred_train['y_tr_rbf']) == True)[0].shape[0] / samples_tr,
                     np.where((pred_train['y_train'] == pred_train['y_tr_lin']) == True)[0].shape[0] / samples_tr]
@@ -93,13 +93,13 @@ def general_PCA_CV():
                      'y_rbf': y_pred_rbf,
                      'y_lin': y_pred_lin,
                      })
-                pickle.dump(predictions, open(open_file + "/pred_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                pickle.dump(predictions, open(OPEN_FILE + "/pred_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
                 svm_accuracy[i] = [
                     np.where((predictions['y_true'] == predictions['y_rbf']) == True)[0].shape[0] / samples,
                     np.where((predictions['y_true'] == predictions['y_lin']) == True)[0].shape[0] / samples]
                 print(svm_accuracy[i])
-            pickle.dump(svm_accuracy_tr, open(open_file + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
-            pickle.dump(svm_accuracy, open(open_file + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+            pickle.dump(svm_accuracy_tr, open(OPEN_FILE + "/accuracy_tr_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+            pickle.dump(svm_accuracy, open(OPEN_FILE + "/accuracy_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
             parameters = pd.DataFrame(
                 {'C_rbf': c_val_rbf,
                  'gamma_rbf': gamma_val_rbf,
@@ -107,7 +107,7 @@ def general_PCA_CV():
                  'best_rbf': best_score_rbf,
                  'best_lin': best_score_lin,
                  })
-            pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+            pickle.dump(parameters, open(OPEN_FILE + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
 
 # ------------------- Function -------------------------

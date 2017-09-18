@@ -22,10 +22,10 @@ from sklearn import preprocessing
 # ----------------------------------------------------
 
 # ------------------- Constant -------------------------
-open_file = os.path.realpath('../data_str/')
-features_sel = ['t_test', 'fisher', 'rfe']
-features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000]
-tissues = ['EC', 'CER', 'FC', 'STG', 'WB']
+OPEN_FILE = os.path.realpath('../data_str/')
+FEATURES_SEL = ['t_test', 'fisher', 'rfe']
+FEATURES_NUM = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000]
+TISSUES = ['EC', 'CER', 'FC', 'STG', 'WB']
 # ----------------------------------------------------
 
 
@@ -50,9 +50,9 @@ def load_data(tissue):
 # ----------------------------------------------------
 def general_exp_var():
 
-    for tissue in tissues:
+    for tissue in TISSUES:
 
-        for feat_sel in features_sel:
+        for feat_sel in FEATURES_SEL:
             beta, info = load_data(tissue)
             vari = beta.var()
             ind = np.argsort(vari)[-50000:]
@@ -62,7 +62,7 @@ def general_exp_var():
             nones = np.where(cat == 1)[0]
             cv_splits = 5
 
-            for num in features_num:
+            for num in FEATURES_NUM:
                 c_val_rbf = np.zeros(cv_splits)
                 gamma_val_rbf = np.zeros(cv_splits)
                 c_val_lin = np.zeros(cv_splits)
@@ -82,7 +82,7 @@ def general_exp_var():
                     samples = test_full.shape[0]
                     samples_tr = train_full.shape[0]
                     start_time = time.time()
-                    features_file = open_file + "/features_exp_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
+                    features_file = OPEN_FILE + "/features_exp_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i)
                     print(train_full.shape)
                     if feat_sel == 't_test':
                         features_all = fs.feature_sel_t_test_parallel(train_full, info, num)
@@ -123,7 +123,7 @@ def general_exp_var():
                          'y_tr_lin': y_tr_lin,
                          })
                     pickle.dump(pred_train,
-                                open(open_file + "/pred_exp_tr_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                                open(OPEN_FILE + "/pred_exp_tr_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
                     svm_accuracy_tr[i] = [
                         np.where((pred_train['y_train'] == pred_train['y_tr_rbf']) == True)[0].shape[0] / samples_tr,
                         np.where((pred_train['y_train'] == pred_train['y_tr_lin']) == True)[0].shape[0] / samples_tr]
@@ -134,7 +134,7 @@ def general_exp_var():
                          'y_lin': y_pred_lin,
                          })
                     pickle.dump(predictions,
-                                open(open_file + "/pred_exp_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
+                                open(OPEN_FILE + "/pred_exp_CV_%s_%s_%d_%d.p" % (tissue, feat_sel, num, i), "wb"))
                     svm_accuracy[i] = [
                         np.where((predictions['y_true'] == predictions['y_rbf']) == True)[0].shape[0] / samples,
                         np.where((predictions['y_true'] == predictions['y_lin']) == True)[0].shape[0] / samples]
@@ -142,9 +142,9 @@ def general_exp_var():
                     print(svm_accuracy[i])
 
                 pickle.dump(svm_accuracy_tr,
-                            open(open_file + "/accuracy_exp_tr_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+                            open(OPEN_FILE + "/accuracy_exp_tr_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
                 pickle.dump(svm_accuracy,
-                            open(open_file + "/accuracy_exp_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+                            open(OPEN_FILE + "/accuracy_exp_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
                 parameters = pd.DataFrame(
                     {'C_rbf': c_val_rbf,
                      'gamma_rbf': gamma_val_rbf,
@@ -152,7 +152,7 @@ def general_exp_var():
                      'best_rbf': best_score_rbf,
                      'best_lin': best_score_lin,
                      })
-                pickle.dump(parameters, open(open_file + "/params_exp_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
+                pickle.dump(parameters, open(OPEN_FILE + "/params_exp_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
 # ------------------- Function -------------------------
 # main()
