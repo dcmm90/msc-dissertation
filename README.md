@@ -1,5 +1,6 @@
 # msc-dissertation
 Scripts and files for my dissertation
+Data found in https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE59685
 
 General functions:
 classification.py
