@@ -160,7 +160,9 @@ def blood_surr():
                      })
                 pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
-
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
     blood_surr()
 

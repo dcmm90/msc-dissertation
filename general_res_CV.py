@@ -20,19 +20,11 @@ import os.path
 import os
 # ----------------------------------------------------
 
-
-# ------------------- Function -------------------------
-# load_data(tissue)
-# This function load the data
-# inputs: tissue - tissue to load data from
-# returns: (betaqn, info)
-#          betaqn - DNA methylation from the tissue
-#          info - info from DNA methylation data
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+features_sel = ['t_test', 'fisher', 'rfe']
+features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000, 10000]
 # ----------------------------------------------------
-def load_data(tissue):
-    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
-    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
-    return (betaqn, info)
 
 
 # ------------------- Function -------------------------
@@ -43,10 +35,7 @@ def load_data(tissue):
 # inputs: tissue - the tissue: 'WB'-'EC'-'FC'-'STG'-'CER'
 # ----------------------------------------------------
 def general_CV(tissue):
-    open_file = os.path.realpath('../data_str/')
     ec, info = load_data(tissue)
-    features_sel = ['t_test', 'fisher', 'rfe']
-    features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000, 10000]
     for feat_sel in features_sel:
         cat = info['braak_bin'].loc[ec.index]
         nzeros = np.where(cat == 0)[0]
@@ -129,9 +118,28 @@ def general_CV(tissue):
             pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
 
+# ------------------- Function -------------------------
+# load_data(tissue)
+# This function load the data
+# inputs: tissue - tissue to load data from
+# returns: (betaqn, info)
+#          betaqn - DNA methylation from the tissue
+#          info - info from DNA methylation data
+# ----------------------------------------------------
+def load_data(tissue):
+    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
+    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
+    return (betaqn, info)
+
+
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
-    tissue = 'WB'
-    general_CV(tissue)
+    #possible tissues: EC, FC, STG, WB, CER
+    tissues = ['EC', 'FC', 'STG', 'WB', 'CER']
+    for tissue in tissues:
+        general_CV(tissue)
 
 
 if __name__ == '__main__':

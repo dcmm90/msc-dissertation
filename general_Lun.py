@@ -20,19 +20,15 @@ import os.path
 import os
 # ----------------------------------------------------
 
-
-# ------------------- Function -------------------------
-# load_data(tissue)
-# This function load the data
-# inputs: tissue - tissue to load data from
-# returns: (betaqn, info)
-#          betaqn - DNA methylation from the tissue
-#          info - info from DNA methylation data
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+tissues = ['EC', 'CER', 'WB', 'FC', 'STG']
+features_sel = ['t_test', 'fisher', 'rfe', 'leo', 'leo_all', 'jager']
+features_num = [5, 10, 15, 20, 50, 75, 100]
+tissue = 'all_non'
+cv_splits = 5
+num = 12
 # ----------------------------------------------------
-def load_data(tissue):
-    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
-    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
-    return (betaqn, info)
 
 
 # ------------------- Function -------------------------
@@ -41,20 +37,12 @@ def load_data(tissue):
 # groups of features using all the selection of data
 # ----------------------------------------------------
 def general_Lun():
-    tissues = ['EC', 'CER', 'WB', 'FC', 'STG']
-
-    cv_splits = 5
-    features_sel = ['t_test', 'fisher', 'rfe', 'leo', 'leo_all', 'jager']
-    num = 12
-
     for feat_sel in features_sel:
         for tissue in tissues:
-
-            save_file = os.path.realpath('../data_str/')
+            save_file = open_file
             betaqn, info = load_data(tissue)
             ec = betaqn
             start_time = time.time()
-            open_file = os.path.realpath('../data_str/')
             features_file = open_file + "/features_LEO_CV_%s_%s_%d.p" % (tissue, feat_sel, num)
             if feat_sel == 't_test':
                 features_all = fs.feature_sel_t_test_parallel(ec, info, num)
@@ -157,6 +145,22 @@ def general_Lun():
         pickle.dump(svm_accuracy_tr, open(save_file + "/accuracy_LEO2_tr_%s_%s.p" % (tissue, feat_sel), "wb"))
 
 
+# ------------------- Function -------------------------
+# load_data(tissue)
+# This function load the data
+# inputs: tissue - tissue to load data from
+# returns: (betaqn, info)
+#          betaqn - DNA methylation from the tissue
+#          info - info from DNA methylation data
+# ----------------------------------------------------
+def load_data(tissue):
+    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
+    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
+    return betaqn, info
+
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
     general_Lun()
 

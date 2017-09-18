@@ -16,10 +16,16 @@ import pickle
 import classification as cl
 import feature_selection as fs
 import utils_msc as ut
-import os.path
 import os
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
+# ----------------------------------------------------
+
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+features_sel = ['t_test', 'fisher', 'rfe']
+features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000]
+tissues = ['EC', 'CER', 'FC', 'STG', 'WB']
 # ----------------------------------------------------
 
 
@@ -43,11 +49,9 @@ def load_data(tissue):
 # of largest variance.
 # ----------------------------------------------------
 def general_exp_var():
-    tissues = ['CER', 'FC', 'STG', 'WB']
+
     for tissue in tissues:
-        open_file = os.path.realpath('../data_str/')
-        features_sel = ['t_test', 'fisher', 'rfe']
-        features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000]
+
         for feat_sel in features_sel:
             beta, info = load_data(tissue)
             vari = beta.var()
@@ -150,7 +154,9 @@ def general_exp_var():
                      })
                 pickle.dump(parameters, open(open_file + "/params_exp_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
-
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
     general_exp_var()
 

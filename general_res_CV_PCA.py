@@ -15,25 +15,18 @@ import numpy as np
 import pickle
 import classification as cl
 import utils_msc as ut
-import os.path
 import os
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
 # ----------------------------------------------------
 
-
-# ------------------- Function -------------------------
-# load_data(tissue)
-# This function load the data
-# inputs: tissue - tissue to load data from
-# returns: (betaqn, info)
-#          betaqn - DNA methylation from the tissue
-#          info - info from DNA methylation data
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+tissues = ['EC', 'FC', 'STG', 'CER', 'WB']
+features_num = [5, 10, 15, 20, 50, 75, 100, 250, 500, 1000, 5000, 10000]
+feat_sel = 'PCA'
 # ----------------------------------------------------
-def load_data(tissue):
-    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
-    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
-    return (betaqn, info)
+
 
 # ------------------- Function -------------------------
 # general_PCA_CV(tissues)
@@ -41,17 +34,13 @@ def load_data(tissue):
 # data using PCA as dimension reduction.
 # inputs: tissues - the tissues
 # ----------------------------------------------------
-def general_PCA_CV(tissues):
-    features_num = [5, 10, 15]
+def general_PCA_CV():
     for tissue in tissues:
-        feat_sel = 'PCA'
-        open_file = os.path.realpath('../data_str/')
         ec, info = load_data(tissue)
         cat = info['braak_bin'].loc[ec.index]
         zeros = np.where(cat == 0)[0]
         ones = np.where(cat == 1)[0]
         cv_splits = 5
-
         for num in features_num:
             c_val_rbf = np.zeros(cv_splits)
             gamma_val_rbf = np.zeros(cv_splits)
@@ -121,9 +110,24 @@ def general_PCA_CV(tissues):
             pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
 
+# ------------------- Function -------------------------
+# load_data(tissue)
+# This function load the data
+# inputs: tissue - tissue to load data from
+# returns: (betaqn, info)
+#          betaqn - DNA methylation from the tissue
+#          info - info from DNA methylation data
+# ----------------------------------------------------
+def load_data(tissue):
+    betaqn = pickle.load( open( '../tissues/resi_norm_%s.p'%(tissue), "rb" ) )
+    info = pd.read_csv('../tissues/info_%s.csv.zip'%(tissue),index_col=0, compression='zip',sep=',')
+    return betaqn, info
+
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
-    tissues = ['EC','FC', 'STG', 'CER', 'WB']
-    general_PCA_CV(tissues)
+    general_PCA_CV()
 
 
 if __name__ == '__main__':

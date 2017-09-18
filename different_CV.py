@@ -20,6 +20,13 @@ import os.path
 import os
 # ----------------------------------------------------
 
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+num = 100
+CV = [3, 5, 7, 10, 15, 20, 25]
+tissues = ['EC', 'FC', 'STG', 'WB', 'CER']
+# ----------------------------------------------------
+
 
 # ------------------- Function -------------------------
 # load_data(tissue)
@@ -36,16 +43,16 @@ def load_data(tissue):
     return (betaqn, info)
 
 
-
+# ------------------- Function -------------------------
+# main()
+# Nested crossvalidation for different number of folds
+# in outer loop.
+# ----------------------------------------------------
 def main():
-    tissues=['WB']
     for tissue in tissues:
         betaqn, info = load_data(tissue)
-        num = 100
-        CV = [3, 5, 7, 10, 15, 20, 25]
         features_sel = ['rfe']
         for feat_sel in features_sel:
-            open_file = os.path.realpath('../data_str/')
             ec = betaqn
             cat = info['braak_bin'].loc[ec.index]
             zeros = np.where(cat == 0)[0]

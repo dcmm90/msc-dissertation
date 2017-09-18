@@ -16,42 +16,17 @@ import pickle
 import classification as cl
 import feature_selection as fs
 import utils_msc as ut
-import os.path
 import os
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
 # ----------------------------------------------------
 
-
-# ------------------- Function -------------------------
-# load_data()
-# This function load the data
-# returns: (betaqn, info)
-#          betaqn - DNA methylation from the tissue
-#          info - info from DNA methylation data
+# ------------------- Constant -------------------------
+open_file = os.path.realpath('../data_str/')
+features_sel = ['t_test','fisher','rfe','PCA']
+features_num = [5, 10, 15, 20, 50, 75, 100]
+tissue = 'all'
 # ----------------------------------------------------
-def load_data():
-    EC_data = pickle.load(open('../tissues/resi_norm_EC.p', "rb"))
-    FC_data = pickle.load(open('../tissues/resi_norm_FC.p', "rb"))
-    STG_data = pickle.load(open('../tissues/resi_norm_STG.p', "rb"))
-    CER_data = pickle.load(open('../tissues/resi_norm_CER.p', "rb"))
-    WB_data = pickle.load(open('../tissues/resi_norm_WB.p', "rb"))
-    frames = [EC_data, FC_data, STG_data, CER_data, WB_data]
-    betaqn = pd.concat(frames)
-    info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
-    info = info.drop('Unnamed: 0', 1)
-    info.loc[(info.braak_stage=='5') | (info.braak_stage=='6'),'braak_bin'] = 1
-    cond = ((info.braak_stage=='0') | (info.braak_stage=='1') | (info.braak_stage=='2') |
-            (info.braak_stage=='3') | (info.braak_stage=='4'))
-    info.loc[cond ,'braak_bin'] = 0
-    info.loc[info.source_tissue == 'entorhinal cortex', 'tissue'] = 'EC'
-    info.loc[info.source_tissue == 'whole blood', 'tissue'] = 'WB'
-    info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
-    info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
-    info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
-    infoExtra = pd.read_csv('infoExtra.csv.zip', index_col=8, compression='zip', sep=',')
-    info.loc[info.index == infoExtra.index, 'subject'] = infoExtra['subjectid']
-    return (betaqn, info)
 
 
 # ------------------- Function -------------------------
@@ -60,11 +35,7 @@ def load_data():
 # all the tissues together
 # ----------------------------------------------------
 def general_all():
-    open_file = os.path.realpath('../data_str/')
-    tissue = 'all'
     ec, info = load_data()
-    features_sel = ['t_test','fisher','rfe','PCA']
-    features_num = [5, 10, 15, 20, 50, 75, 100]
     for feat_sel in features_sel:
         cat = info['braak_bin'].loc[ec.index]
         nzeros = np.where(cat == 0)[0]
@@ -161,8 +132,42 @@ def general_all():
             pickle.dump(parameters, open(open_file + "/params_CV_%s_%s_%d.p" % (tissue, feat_sel, num), "wb"))
 
 
+# ------------------- Function -------------------------
+# load_data()
+# This function load the data
+# returns: (betaqn, info)
+#          betaqn - DNA methylation from the tissue
+#          info - info from DNA methylation data
+# ----------------------------------------------------
+def load_data():
+    EC_data = pickle.load(open('../tissues/resi_norm_EC.p', "rb"))
+    FC_data = pickle.load(open('../tissues/resi_norm_FC.p', "rb"))
+    STG_data = pickle.load(open('../tissues/resi_norm_STG.p', "rb"))
+    CER_data = pickle.load(open('../tissues/resi_norm_CER.p', "rb"))
+    WB_data = pickle.load(open('../tissues/resi_norm_WB.p', "rb"))
+    frames = [EC_data, FC_data, STG_data, CER_data, WB_data]
+    betaqn = pd.concat(frames)
+    info = pd.read_csv('info.csv.zip',index_col=1, compression='zip',sep=',')
+    info = info.drop('Unnamed: 0', 1)
+    info.loc[(info.braak_stage=='5') | (info.braak_stage=='6'),'braak_bin'] = 1
+    cond = ((info.braak_stage=='0') | (info.braak_stage=='1') | (info.braak_stage=='2') |
+            (info.braak_stage=='3') | (info.braak_stage=='4'))
+    info.loc[cond,'braak_bin'] = 0
+    info.loc[info.source_tissue == 'entorhinal cortex', 'tissue'] = 'EC'
+    info.loc[info.source_tissue == 'whole blood', 'tissue'] = 'WB'
+    info.loc[info.source_tissue == 'frontal cortex', 'tissue'] = 'FC'
+    info.loc[info.source_tissue == 'superior temporal gyrus', 'tissue'] = 'STG'
+    info.loc[info.source_tissue == 'cerebellum', 'tissue'] = 'CER'
+    infoExtra = pd.read_csv('infoExtra.csv.zip', index_col=8, compression='zip', sep=',')
+    info.loc[info.index == infoExtra.index, 'subject'] = infoExtra['subjectid']
+    return betaqn, info
+
+# ------------------- Function -------------------------
+# main()
+# ----------------------------------------------------
 def main():
     general_all()
 
 if __name__ == '__main__':
 	main()
+
